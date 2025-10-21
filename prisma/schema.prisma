@@ -7,9 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
+model user {
+  UserID       String         @id @default(uuid()) @db.VarChar(50)
+  FirstName    String         @db.VarChar(100)
+  LastName     String         @db.VarChar(100)
+  DateOfBirth  DateTime       @db.Date
+  Username     String         @unique(map: "unique_Username") @db.VarChar(100)
+  Password     String         @db.VarChar(255)
+
+  @@index([Username], map: "index_Username")
 }
