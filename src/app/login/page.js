@@ -63,7 +63,7 @@ export default function Login() {
                             />
                         </div>
                         <button type="submit" className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                            Login
+                            Log
                         </button>
                         <Link href="/register">
                             <button type="button" className="w-full border border-black text-black py-2 rounded-md hover:bg-gray-200 transition">
