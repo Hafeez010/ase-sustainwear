@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 export default function AdminNavBar({ activeTab }) {
-  const tabs = ["Dashboard", "User Management", "Reports", "System Logs"];
+  const tabs = ["Dashboard", "User Management", "Reports & Analytics", "System Logs"];
 
   return (
     <div className="flex gap-4 justify-center mb-10">
