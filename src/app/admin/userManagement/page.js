@@ -16,15 +16,20 @@ export default function UserManagement() {
 
   return (
     <main className="flex flex-col items-center justify-start min-h-screen px-6 py-10 bg-gray-50 text-gray-800">
+      {/* Page Title */}
       <h1 className="text-5xl font-extrabold mb-4 text-black text-center">
         User Management
       </h1>
 
-      <AdminNavBar />
+      {/* Navigation Tabs */}
+      <AdminNavBar activeTab="User Management" />
 
+      {/* Table + Summary Section */}
       <div className="flex flex-col md:flex-row justify-center gap-10 w-full max-w-5xl">
+        {/* User Table Component */}
         <UserTable users={users} />
 
+        {/* Summary Box Component */}
         <SummaryBox 
           totalUsers={28} 
           totalRequests={17} 
