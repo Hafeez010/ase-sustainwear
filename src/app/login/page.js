@@ -12,27 +12,40 @@ export default function Login() {
     const [success, setSuccess] = useState('');
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setError('');
-        setSuccess('');
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        });
+    const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (response.ok) {
-            setSuccess(data.message);
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('username', username);
-            router.push('dashboard');
+    if (response.ok) {
+        setSuccess(data.message);
+
+        
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('role', data.role);
+
+        
+        if (data.role === "admin") {
+            router.push("/admin");
+        } else if (data.role === "charity_staff") {
+            router.push("/charityStaff");
         } else {
-            setError(data.error || data.message);
+            router.push("/donor");
         }
-    };
+
+    } else {
+        setError(data.error || data.message);
+    }
+};
+
 
     return (
         <main>
