@@ -42,6 +42,7 @@ export async function POST(req) {
       token,
       userId: user.UserID,
       username: user.Username,
+      role: user.Role,
     }), { status: 200 });
 
   } catch (error) {

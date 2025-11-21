@@ -14,6 +14,7 @@ model user {
   DateOfBirth  DateTime       @db.Date
   Username     String         @unique(map: "unique_Username") @db.VarChar(100)
   Password     String         @db.VarChar(255)
+  Role         String   @db.VarChar(50)
 
   @@index([Username], map: "index_Username")
 }
