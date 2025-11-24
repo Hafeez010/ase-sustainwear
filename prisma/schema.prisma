@@ -8,13 +8,26 @@ datasource db {
 }
 
 model user {
-  UserID       String         @id @default(uuid()) @db.VarChar(50)
-  FirstName    String         @db.VarChar(100)
-  LastName     String         @db.VarChar(100)
-  DateOfBirth  DateTime       @db.Date
-  Username     String         @unique(map: "unique_Username") @db.VarChar(100)
-  Password     String         @db.VarChar(255)
-  Role         String   @db.VarChar(50)
+  UserID      String     @id @default(uuid()) @db.VarChar(50)
+  FirstName   String     @db.VarChar(100)
+  LastName    String     @db.VarChar(100)
+  DateOfBirth DateTime   @db.Date
+  Username    String     @unique(map: "unique_Username") @db.VarChar(100)
+  Password    String     @db.VarChar(255)
+  Role        String     @db.VarChar(50)
+  donation    donation[]
 
   @@index([Username], map: "index_Username")
+}
+
+model donation {
+  DonationID  String   @id @default(uuid()) @db.VarChar(50)
+  Name        String   @db.VarChar(100)
+  Phone       String?  @db.VarChar(20)
+  Type        String   @db.VarChar(100)
+  Condition   String   @db.VarChar(50)
+  Description String?  @db.Text
+  SubmittedAt DateTime @default(now())
+  UserID      String?  @db.VarChar(50)
+  user        user?    @relation(fields: [UserID], references: [UserID])
 }
