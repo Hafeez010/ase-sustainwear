@@ -27,6 +27,8 @@ model donation {
   Type        String   @db.VarChar(100)
   Condition   String   @db.VarChar(50)
   Description String?  @db.Text
+  Quantity    Int      @default(1)
+  Status      String   @default("Pending")
   SubmittedAt DateTime @default(now())
   UserID      String?  @db.VarChar(50)
   user        user?    @relation(fields: [UserID], references: [UserID])

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { name, phone, type, condition, description, userId } = body;
+    const { name, phone, type, condition, description, userId, quantity } = body;
 
     if (!userId) {
       return new Response(JSON.stringify({ error: "User not logged in" }), {
@@ -27,6 +27,8 @@ export async function POST(req) {
         Type: type,
         Condition: condition,
         Description: description || null,
+        Quantity: quantity ? Number(quantity) : 1,
+        Status: "Pending",
         UserID: userId,
       }
     });
