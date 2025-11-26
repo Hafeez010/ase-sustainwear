@@ -3,7 +3,7 @@
 import AdminNavBar from "@/app/components/AdminNavBar";
 import SystemLogsTable from "@/app/components/SystemLogsTable";
 
-export default function SystemLogsPage() {
+export default function SystemsLogPage() {
   const logs = [
     { time: "2025-10-28 14:29", user: "User 9", role: "Donor", action: "Submitted donation", status: "Success" },
     { time: "2025-10-28 16:30", user: "User 17", role: "Staff", action: "Rejected donation", status: "Success" },
