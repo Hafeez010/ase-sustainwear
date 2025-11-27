@@ -83,7 +83,7 @@ export default function Donor() {
           <div className="bg-white border-2 border-black rounded-xl p-8 shadow-sm">
             <h1 className="text-3xl font-extrabold mb-3">Hello, {username}.</h1>
             <p className="text-slate-600 leading-relaxed">
-              Thanks for supporting circular fashion. Use the options above to
+              Thanks for supporting SustainWear. Use the options above to
               submit a donation or browse your past contributions. Your
               generosity helps clothing reach people who need it.
             </p>
