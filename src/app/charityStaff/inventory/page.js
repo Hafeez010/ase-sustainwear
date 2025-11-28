@@ -10,14 +10,16 @@ export default function InventoryPage() {
   const [addItemOpen, setAddItemOpen] = useState(false); // Add item modal
   const [distributionRecords, setDistributionRecords] = useState([]);
 
-  useEffect(() => {
-    // MOCK INVENTORY DATA
-    setInventory([
-      { id: "C101", category: "Shirts", condition: "Good", quantity: 124, status: "Available" },
-      { id: "C205", category: "Pants", condition: "Good", quantity: 87, status: "Available" },
-      { id: "C330", category: "Jackets", condition: "Mixed", quantity: 42, status: "Low" },
-    ]);
-  }, []);
+useEffect(() => {
+  const fetchInventory = async () => {
+    const res = await fetch("/api/inventory");
+    const data = await res.json();
+    setInventory(data);
+  };
+
+  fetchInventory();
+}, []);
+
 
   // HANDLE ALLOCATION SUBMIT
   const handleAllocateSubmit = (e) => {

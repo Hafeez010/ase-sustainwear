@@ -7,43 +7,52 @@ export default function IncomingDonations() {
   const [donations, setDonations] = useState([]);
   const [selectedDonation, setSelectedDonation] = useState(null); // modal data
 
-  useEffect(() => {
-    // MOCK DATA
-    setDonations([
-      {
-        id: "D001",
-        donorName: "Sarah Tan",
-        items: ["Shirt", "Pants"],
-        status: "Pending"
-      },
-      {
-        id: "D002",
-        donorName: "John Lee",
-        items: ["Jacket"],
-        status: "Approved"
-      },
-      {
-        id: "D003",
-        donorName: "Emma Wong",
-        items: ["Shoes"],
-        status: "Pending"
-      }
-    ]);
-  }, []);
-
-  // Handle Approve
-  const approveDonation = (id) => {
-    setDonations((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, status: "Approved" } : d))
-    );
+useEffect(() => {
+  const fetchDonations = async () => {
+    try {
+      const res = await fetch("/api/donations");
+      const data = await res.json();
+      setDonations(data);
+    } catch (err) {
+      console.error("Failed to fetch donations:", err);
+    }
   };
+  fetchDonations();
+}, []);
 
-  // Handle Decline
-  const declineDonation = (id) => {
+
+const approveDonation = async (id) => {
+  try {
+    const res = await fetch("/api/donations/approve", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ donationID: id }),
+    });
+    const updated = await res.json();
     setDonations((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, status: "Declined" } : d))
+      prev.map((d) => (d.DonationID === updated.DonationID ? updated : d))
     );
-  };
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const declineDonation = async (id) => {
+  try {
+    const res = await fetch("/api/donations/decline", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ donationID: id }),
+    });
+    const updated = await res.json();
+    setDonations((prev) =>
+      prev.map((d) => (d.DonationID === updated.DonationID ? updated : d))
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   return (
     <main className="flex min-h-screen bg-gray-100">
@@ -65,44 +74,39 @@ export default function IncomingDonations() {
             </thead>
 
             <tbody>
-              {donations.map((d) => (
-                <tr key={d.id}>
-                  <td className="border border-black px-4 py-2">{d.id}</td>
-                  <td className="border border-black px-4 py-2">{d.donorName}</td>
-                  <td className="border border-black px-4 py-2">{d.items.length}</td>
-                  <td className="border border-black px-4 py-2">{d.status}</td>
+  {donations.map((d) => (
+    <tr key={d.DonationID}>
+      <td className="border border-black px-4 py-2">{d.DonationID}</td>
+      <td className="border border-black px-4 py-2">{d.Name}</td>
+      <td className="border border-black px-4 py-2">{d.Quantity}</td>
+      <td className="border border-black px-4 py-2">{d.Status}</td>
 
-                  <td className="border border-black px-4 py-2">
-                    <div className="flex gap-2">
+      <td className="border border-black px-4 py-2">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSelectedDonation(d)}
+            className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+          >
+            View
+          </button>
 
-                      {/* VIEW BUTTON */}
-                      <button
-                        onClick={() => setSelectedDonation(d)}
-                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-                      >
-                        View
-                      </button>
+          <button
+            onClick={() => approveDonation(d.DonationID)}
+            className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+          >
+            Approve
+          </button>
 
-                      {/* APPROVE BUTTON */}
-                      <button
-                        onClick={() => approveDonation(d.id)}
-                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-                      >
-                        Approve
-                      </button>
-
-                      {/* DECLINE BUTTON */}
-                      <button
-                        onClick={() => declineDonation(d.id)}
-                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-                      >
-                        Decline
-                      </button>
-
-                    </div>
-                  </td>
-                </tr>
-              ))}
+          <button
+            onClick={() => declineDonation(d.DonationID)}
+            className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+          >
+            Decline
+          </button>
+        </div>
+      </td>
+    </tr>
+  ))}
 
               {donations.length === 0 && (
                 <tr>
@@ -124,16 +128,12 @@ export default function IncomingDonations() {
 
             <h2 className="text-2xl font-bold mb-4">Donation Details</h2>
 
-            <p><strong>ID:</strong> {selectedDonation.id}</p>
-            <p><strong>Donor:</strong> {selectedDonation.donorName}</p>
-            <p><strong>Status:</strong> {selectedDonation.status}</p>
-            <p className="mt-4 font-semibold">Items:</p>
+            <p><strong>ID:</strong> {selectedDonation.DonationID}</p>
+            <p><strong>Donor:</strong> {selectedDonation.Name}</p>
+            <p><strong>Status:</strong> {selectedDonation.Status}</p>
+            <p className="mt-4 font-semibold">Item:</p>
+            <p>{selectedDonation.Type} (Quantity: {selectedDonation.Quantity})</p>
 
-            <ul className="list-disc pl-6">
-              {selectedDonation.items.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
 
             <button
               onClick={() => setSelectedDonation(null)}
