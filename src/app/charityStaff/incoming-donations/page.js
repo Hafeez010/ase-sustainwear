@@ -5,54 +5,75 @@ import SidebarStaff from "../../components/SidebarStaff";
 
 export default function IncomingDonations() {
   const [donations, setDonations] = useState([]);
-  const [selectedDonation, setSelectedDonation] = useState(null); // modal data
+  const [selectedDonation, setSelectedDonation] = useState(null);
 
-useEffect(() => {
-  const fetchDonations = async () => {
-    try {
-      const res = await fetch("/api/donations");
-      const data = await res.json();
-      setDonations(data);
-    } catch (err) {
-      console.error("Failed to fetch donations:", err);
-    }
-  };
-  fetchDonations();
-}, []);
+  // Fetch donations on mount
+  useEffect(() => {
+    const fetchDonations = async () => {
+      try {
+        const res = await fetch("/api/donations");
+        const data = await res.json();
+        setDonations(data);
+      } catch (err) {
+        console.error("Failed to fetch donations:", err);
+      }
+    };
+    fetchDonations();
+  }, []);
 
-
-const approveDonation = async (id) => {
+  const approveDonation = async (id) => {
   try {
     const res = await fetch("/api/donations/approve", {
-      method: "PATCH",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ donationID: id }),
     });
-    const updated = await res.json();
+
+    if (!res.ok) {
+      console.error("Approve failed");
+      return;
+    }
+
+    // Get the response from backend
+    const data = await res.json();
+
+    // Remove the approved donation from the list
     setDonations((prev) =>
-      prev.map((d) => (d.DonationID === updated.DonationID ? updated : d))
+      prev.filter((d) => d.DonationID !== data.donationID)
     );
+
   } catch (err) {
     console.error(err);
   }
 };
 
-const declineDonation = async (id) => {
-  try {
-    const res = await fetch("/api/donations/decline", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ donationID: id }),
-    });
-    const updated = await res.json();
-    setDonations((prev) =>
-      prev.map((d) => (d.DonationID === updated.DonationID ? updated : d))
-    );
-  } catch (err) {
-    console.error(err);
-  }
-};
+  // Decline donation: updates status in place
+  const declineDonation = async (id) => {
+    try {
+      const res = await fetch("/api/donations/decline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donationID: id }),
+      });
 
+      if (!res.ok) {
+        console.error("Decline failed");
+        return;
+      }
+
+      const data = await res.json();
+
+      setDonations((prev) =>
+        prev.map((d) =>
+          d.DonationID === data.DonationID
+            ? { ...d, Status: "Declined" }
+            : d
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <main className="flex min-h-screen bg-gray-100">
@@ -74,39 +95,41 @@ const declineDonation = async (id) => {
             </thead>
 
             <tbody>
-  {donations.map((d) => (
-    <tr key={d.DonationID}>
-      <td className="border border-black px-4 py-2">{d.DonationID}</td>
-      <td className="border border-black px-4 py-2">{d.Name}</td>
-      <td className="border border-black px-4 py-2">{d.Quantity}</td>
-      <td className="border border-black px-4 py-2">{d.Status}</td>
+              {donations.map((d) => (
+                <tr key={d.DonationID}>
+                  <td className="border border-black px-4 py-2">{d.DonationID}</td>
+                  <td className="border border-black px-4 py-2">{d.Name}</td>
+                  <td className="border border-black px-4 py-2">{d.Quantity}</td>
+                  <td className="border border-black px-4 py-2">{d.Status}</td>
 
-      <td className="border border-black px-4 py-2">
-        <div className="flex gap-2">
-          <button
-            onClick={() => setSelectedDonation(d)}
-            className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-          >
-            View
-          </button>
+                  <td className="border border-black px-4 py-2">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setSelectedDonation(d)}
+                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+                      >
+                        View
+                      </button>
 
-          <button
-            onClick={() => approveDonation(d.DonationID)}
-            className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-          >
-            Approve
-          </button>
+                      <button
+                        onClick={() => approveDonation(d.DonationID)}
+                        disabled={d.Status !== "Pending"}
+                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200 disabled:opacity-50"
+                      >
+                        Approve
+                      </button>
 
-          <button
-            onClick={() => declineDonation(d.DonationID)}
-            className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-          >
-            Decline
-          </button>
-        </div>
-      </td>
-    </tr>
-  ))}
+                      <button
+                        onClick={() => declineDonation(d.DonationID)}
+                        disabled={d.Status !== "Pending"}
+                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200 disabled:opacity-50"
+                      >
+                        Decline
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
 
               {donations.length === 0 && (
                 <tr>
@@ -120,12 +143,10 @@ const declineDonation = async (id) => {
         </div>
       </section>
 
-      {/* ---------- VIEW MODAL ---------- */}
+      {/* ---------------- VIEW MODAL ---------------- */}
       {selectedDonation && (
-            <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
-          
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
-
             <h2 className="text-2xl font-bold mb-4">Donation Details</h2>
 
             <p><strong>ID:</strong> {selectedDonation.DonationID}</p>
@@ -134,18 +155,15 @@ const declineDonation = async (id) => {
             <p className="mt-4 font-semibold">Item:</p>
             <p>{selectedDonation.Type} (Quantity: {selectedDonation.Quantity})</p>
 
-
             <button
               onClick={() => setSelectedDonation(null)}
               className="mt-6 px-6 py-2 border border-black rounded-md hover:bg-gray-200"
             >
               Close
             </button>
-
           </div>
         </div>
       )}
     </main>
   );
 }
-

@@ -8,72 +8,85 @@ export default function InventoryPage() {
   const [selectedItem, setSelectedItem] = useState(null); // View modal
   const [allocateItem, setAllocateItem] = useState(null); // Allocate modal
   const [addItemOpen, setAddItemOpen] = useState(false); // Add item modal
-  const [distributionRecords, setDistributionRecords] = useState([]);
 
-useEffect(() => {
+  // -------------------- FETCH INVENTORY --------------------
   const fetchInventory = async () => {
-    const res = await fetch("/api/inventory");
-    const data = await res.json();
-    setInventory(data);
+    try {
+      const res = await fetch("/api/inventory");
+      const data = await res.json();
+      setInventory(data);
+    } catch (err) {
+      console.error("Failed to fetch inventory:", err);
+    }
   };
 
-  fetchInventory();
-}, []);
+  useEffect(() => {
+    fetchInventory();
+  }, []);
 
-
-  // HANDLE ALLOCATION SUBMIT
-  const handleAllocateSubmit = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const recipient = formData.get("recipient");
-    const qty = parseInt(formData.get("quantity"), 10);
-
-    // Update inventory quantity
-    setInventory((prev) =>
-      prev.map((item) =>
-        item.id === allocateItem.id
-          ? {
-              ...item,
-              quantity: item.quantity - qty,
-              status: item.quantity - qty <= 50 ? "Low" : "Available",
-            }
-          : item
-      )
-    );
-
-    // Add new distribution record
-    setDistributionRecords((prev) => [
-      ...prev,
-      {
-        id: "R" + String(prev.length + 1).padStart(3, "0"),
-        itemID: allocateItem.id,
-        recipient: recipient,
-        quantity: qty,
-        date: new Date().toLocaleDateString(),
-      },
-    ]);
-
-    setAllocateItem(null); // Close modal
-  };
-
-  // HANDLE ADD ITEM SUBMIT
-  const handleAddItemSubmit = (e) => {
+  // -------------------- ALLOCATE ITEM --------------------
+  const handleAllocateSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
 
-    const newItem = {
-      id: formData.get("id"),
-      category: formData.get("category"),
-      condition: formData.get("condition"),
+    const body = {
+      inventoryID: allocateItem.InventoryID,
+      recipient: formData.get("recipient"),
       quantity: parseInt(formData.get("quantity")),
-      status: formData.get("status"),
     };
 
-    setInventory((prev) => [...prev, newItem]);
-    setAddItemOpen(false);
+    try {
+      const res = await fetch("/api/distribution", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        console.error("Allocation failed");
+        return;
+      }
+
+      // Refresh inventory to reflect updated quantity
+      fetchInventory();
+      setAllocateItem(null); // Close modal
+    } catch (err) {
+      console.error(err);
+    }
   };
 
+  // -------------------- ADD NEW ITEM --------------------
+  const handleAddItemSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const body = {
+      Category: formData.get("category"),
+      Condition: formData.get("condition"),
+      Quantity: parseInt(formData.get("quantity")),
+      Status: formData.get("status"),
+    };
+
+    try {
+      const res = await fetch("/api/inventory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        console.error("Add item failed");
+        return;
+      }
+
+      fetchInventory(); // Refresh inventory list
+      setAddItemOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // -------------------- RENDER --------------------
   return (
     <main className="flex min-h-screen bg-gray-100">
       <SidebarStaff active="inventory" />
@@ -113,16 +126,14 @@ useEffect(() => {
 
             <tbody>
               {inventory.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-black px-4 py-2">{item.id}</td>
-                  <td className="border border-black px-4 py-2">{item.category}</td>
-                  <td className="border border-black px-4 py-2">{item.condition}</td>
-                  <td className="border border-black px-4 py-2">{item.quantity}</td>
-                  <td className="border border-black px-4 py-2">{item.status}</td>
-
+                <tr key={item.InventoryID}>
+                  <td className="border border-black px-4 py-2">{item.InventoryID}</td>
+                  <td className="border border-black px-4 py-2">{item.Category}</td>
+                  <td className="border border-black px-4 py-2">{item.Condition}</td>
+                  <td className="border border-black px-4 py-2">{item.Quantity}</td>
+                  <td className="border border-black px-4 py-2">{item.Status}</td>
                   <td className="border border-black px-4 py-2">
                     <div className="flex gap-2">
-
                       {/* VIEW BUTTON */}
                       <button
                         onClick={() => setSelectedItem(item)}
@@ -131,7 +142,7 @@ useEffect(() => {
                         View
                       </button>
 
-                      {/* EDIT BUTTON (future feature) */}
+                      {/* EDIT BUTTON (future) */}
                       <button className="px-3 py-1 border border-black rounded-md hover:bg-gray-200">
                         Edit
                       </button>
@@ -140,10 +151,10 @@ useEffect(() => {
                       <button
                         onClick={() => setAllocateItem(item)}
                         className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+                        disabled={item.Quantity <= 0}
                       >
                         Allocate
                       </button>
-
                     </div>
                   </td>
                 </tr>
@@ -159,11 +170,11 @@ useEffect(() => {
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
             <h2 className="text-2xl font-bold mb-4">Inventory Item Details</h2>
 
-            <p><strong>ID:</strong> {selectedItem.id}</p>
-            <p><strong>Category:</strong> {selectedItem.category}</p>
-            <p><strong>Condition:</strong> {selectedItem.condition}</p>
-            <p><strong>Quantity:</strong> {selectedItem.quantity}</p>
-            <p><strong>Status:</strong> {selectedItem.status}</p>
+            <p><strong>ID:</strong> {selectedItem.InventoryID}</p>
+            <p><strong>Category:</strong> {selectedItem.Category}</p>
+            <p><strong>Condition:</strong> {selectedItem.Condition}</p>
+            <p><strong>Quantity:</strong> {selectedItem.Quantity}</p>
+            <p><strong>Status:</strong> {selectedItem.Status}</p>
 
             <button
               onClick={() => setSelectedItem(null)}
@@ -182,8 +193,8 @@ useEffect(() => {
             <h2 className="text-2xl font-bold mb-4">Allocate Item for Distribution</h2>
 
             <form onSubmit={handleAllocateSubmit}>
-              <p><strong>Item:</strong> {allocateItem.category} ({allocateItem.id})</p>
-              <p><strong>Available:</strong> {allocateItem.quantity}</p>
+              <p><strong>Item:</strong> {allocateItem.Category} ({allocateItem.InventoryID})</p>
+              <p><strong>Available:</strong> {allocateItem.Quantity}</p>
 
               <label className="block mt-4 mb-1 font-semibold">Recipient</label>
               <input
@@ -197,7 +208,7 @@ useEffect(() => {
                 name="quantity"
                 type="number"
                 min="1"
-                max={allocateItem.quantity}
+                max={allocateItem.Quantity}
                 required
                 className="w-full px-3 py-2 border border-black rounded-md"
               />
@@ -227,19 +238,10 @@ useEffect(() => {
       {addItemOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
-
             <h2 className="text-2xl font-bold mb-4">Add New Inventory Item</h2>
 
             <form onSubmit={handleAddItemSubmit}>
-
-              <label className="block mb-1 font-semibold">Item ID</label>
-              <input
-                name="id"
-                required
-                className="w-full px-3 py-2 border border-black rounded-md"
-              />
-
-              <label className="block mt-4 mb-1 font-semibold">Category</label>
+              <label className="block mb-1 font-semibold">Category</label>
               <input
                 name="category"
                 required
@@ -294,15 +296,10 @@ useEffect(() => {
                   Add Item
                 </button>
               </div>
-
             </form>
           </div>
         </div>
       )}
-
     </main>
   );
 }
-
-
-
