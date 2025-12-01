@@ -12,7 +12,11 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [roleCode, setRoleCode] = useState('');
+  const [roleError, setRoleError] = useState('');
   const [formErrors, setFormErrors] = useState({
+   
+
     usernameError: '',
     firstNameError: '',
     lastNameError: '',
@@ -51,7 +55,7 @@ export default function SignUp() {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, firstName, lastName, dob, password }),
+        body: JSON.stringify({ username, firstName, lastName, dob, password, roleCode }),
       });
 
       const data = await response.json();
@@ -133,6 +137,16 @@ export default function SignUp() {
               onChange={(e) => { setConfirmPassword(e.target.value); setFormErrors({ ...formErrors, confirmPasswordError: '' }); }}
             />
             {formErrors.confirmPasswordError && <p className="text-red-500 text-sm">{formErrors.confirmPasswordError}</p>}
+
+            <label className="block text-sm font-medium text-gray-700">Role Code (optional)</label>
+            <input
+            type="text"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={roleCode}
+            onChange={(e) => { setRoleCode(e.target.value); setRoleError(''); }}
+            />
+            {roleError && <p className="text-red-500 text-sm">{roleError}</p>}
+
 
             <p className="text-red-500 text-sm mb-0">{error}</p>
 

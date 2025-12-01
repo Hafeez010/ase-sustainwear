@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -7,7 +7,6 @@ export default function DonationsPage() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // active-link style helper (current page turns black)
   const linkStyle = (path) =>
     pathname === path
       ? 'px-3 py-1 rounded-md border-2 border-black bg-black text-white transition'
@@ -22,6 +21,18 @@ export default function DonationsPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState('');
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+  const storedUserId = localStorage.getItem('userId');
+
+  if (!storedUserId) {
+    router.push('/login');
+  } else {
+    setUserId(storedUserId);
+  }
+}, [router]);
+
 
   const clothingOptions = [
     'Jumpers','Trousers','Shirts','T-Shirts','Jeans','Shorts','Dresses','Skirts',
@@ -41,21 +52,44 @@ export default function DonationsPage() {
     setSubmitting(true);
     setNotice('');
 
-    // TODO: replace with your real API call when ready
-    setTimeout(() => {
+    if (!userId) {
+      setNotice('You must be logged in to submit a donation.');
       setSubmitting(false);
-      setNotice('Thank you! Your donation has been recorded. We’ll follow up soon.');
-      setForm({ name: '', phone: '', type: 'Jumpers', condition: 'Good', description: '' });
-    }, 600);
+      return;
+    }
+
+    const res = await fetch('/api/donations/new', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, userId }),
+    });
+
+    const data = await res.json();
+    setSubmitting(false);
+
+    if (res.ok) {
+      setNotice('Thank you! Your donation has been recorded.');
+      setForm({
+        name: '',
+        phone: '',
+        type: 'Jumpers',
+        condition: 'Good',
+        description: '',
+      });
+    } else {
+      setNotice(data.error || 'Something went wrong.');
+    }
   };
 
   return (
     <main className="min-h-screen bg-gray-50 text-slate-900">
-      {/* Header (same look as dashboard) */}
+      {/* Header & navigation */}
       <header className="bg-white border-b-2 border-black">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-md border-2 border-black flex items-center justify-center font-bold">SW</div>
+            <div className="h-10 w-10 rounded-md border-2 border-black flex items-center justify-center font-bold">
+              SW
+            </div>
             <span className="text-lg font-bold">SustainWear</span>
           </div>
           <nav className="hidden md:flex items-center gap-3">
@@ -65,7 +99,12 @@ export default function DonationsPage() {
             <Link href="/donor/contactUs" className={linkStyle('/donor/contactUs')}>Contact Us</Link>
           </nav>
           <button
-            onClick={() => router.push('/login')}
+            onClick={() => {
+              localStorage.removeItem('userId');
+              localStorage.removeItem('username');
+              localStorage.removeItem('role');
+              router.push('/login');
+            }}
             className="px-3 py-1 rounded-md border-2 border-black bg-black text-white hover:bg-gray-800 transition"
           >
             Logout
@@ -73,19 +112,16 @@ export default function DonationsPage() {
         </div>
       </header>
 
-      {/* Donation Box */}
+      {/* Donation form */}
       <section className="mx-auto max-w-3xl px-6 py-10">
         <div className="bg-white border-2 border-black rounded-xl shadow-sm p-8">
           <h1 className="text-3xl font-extrabold text-center mb-8">Donation Box</h1>
-
           {notice && (
             <div className="mb-6 border-2 border-black rounded-md bg-gray-100 px-4 py-3 text-center text-sm">
               {notice}
             </div>
           )}
-
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Row: Name / Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
@@ -113,7 +149,6 @@ export default function DonationsPage() {
               </div>
             </div>
 
-            {/* Row: Type / Condition */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="type" className="block text-sm font-medium mb-1">What would you like to donate?</label>
@@ -145,7 +180,6 @@ export default function DonationsPage() {
               </div>
             </div>
 
-            {/* Description */}
             <div>
               <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
               <textarea
@@ -159,7 +193,6 @@ export default function DonationsPage() {
               />
             </div>
 
-            {/* Submit */}
             <div className="pt-2 text-center">
               <button
                 type="submit"

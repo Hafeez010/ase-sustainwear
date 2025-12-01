@@ -1,0 +1,46 @@
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+
+export async function POST(req) {
+  try {
+    const { donationID } = await req.json();
+
+    // 1. Find the donation
+    const donation = await prisma.donation.findUnique({
+      where: { DonationID: donationID },
+    });
+
+    if (!donation) {
+      return NextResponse.json({ error: "Donation not found" }, { status: 404 });
+    }
+
+    // 2. Update donation status to "Approved"
+    await prisma.donation.update({
+      where: { DonationID: donationID },
+      data: { Status: "Approved" },
+    });
+
+    // 3. Add the donation to inventory
+    const inventoryItem = await prisma.inventory.create({
+      data: {
+        Category: donation.Type,
+        Condition: donation.Condition,
+        Quantity: donation.Quantity,
+        Status: "Available",
+        SourceDonationID: donation.DonationID,
+      },
+    });
+
+    // 4. Return inventory item and donationID for frontend removal
+    return NextResponse.json({
+      donationID: donation.DonationID,
+      inventoryItem,
+    });
+  } catch (error) {
+    console.error("Approve donation error:", error);
+    return NextResponse.json(
+      { error: "Failed to approve donation" },
+      { status: 500 }
+    );
+  }
+}

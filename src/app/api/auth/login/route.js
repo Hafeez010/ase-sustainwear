@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from "@/lib/prisma";
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
 const secret = process.env.JWT_SECRET || 'yourSecretKey'; 
 
 export async function POST(req) {
@@ -42,6 +41,7 @@ export async function POST(req) {
       token,
       userId: user.UserID,
       username: user.Username,
+      role: user.Role,
     }), { status: 200 });
 
   } catch (error) {

@@ -11,17 +11,37 @@ export default function Donor() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ donationsMade: 0, totalItems: 0 });
 
-  useEffect(() => {
-    const stored =
-      typeof window !== 'undefined' ? localStorage.getItem('username') : null;
-    if (stored) setUsername(stored);
+useEffect(() => {
+  const stored =
+    typeof window !== 'undefined' ? localStorage.getItem('username') : null;
+  if (stored) setUsername(stored);
 
-    // demo data; swap for API later
-    setTimeout(() => {
-      setStats({ donationsMade: 8, totalItems: 29 });
-      setLoading(false);
-    }, 200);
-  }, []);
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    router.push("/login");
+    return;
+  }
+
+  async function loadStats() {
+    try {
+      const res = await fetch(`/api/donations/stats?userId=${userId}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        setStats({
+          donationsMade: data.donationsMade,
+          totalItems: data.totalItems
+        });
+      }
+    } catch (err) {
+      console.error("Stats fetch error:", err);
+    }
+
+    setLoading(false);
+  }
+
+  loadStats();
+}, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem('username');
