@@ -154,6 +154,8 @@ export default function IncomingDonations() {
             <p><strong>Status:</strong> {selectedDonation.Status}</p>
             <p className="mt-4 font-semibold">Item:</p>
             <p>{selectedDonation.Type} (Quantity: {selectedDonation.Quantity})</p>
+           <p><strong>Description:</strong> {selectedDonation.Description}</p>
+
 
             <button
               onClick={() => setSelectedDonation(null)}

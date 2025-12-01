@@ -7,6 +7,7 @@ export default function InventoryPage() {
   const [inventory, setInventory] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null); // View modal
   const [allocateItem, setAllocateItem] = useState(null); // Allocate modal
+  const [editItem, setEditItem] = useState(null); // Edit modal
   const [addItemOpen, setAddItemOpen] = useState(false); // Add item modal
 
   // -------------------- FETCH INVENTORY --------------------
@@ -47,15 +48,14 @@ export default function InventoryPage() {
         return;
       }
 
-      // Refresh inventory to reflect updated quantity
-      fetchInventory();
-      setAllocateItem(null); // Close modal
+      fetchInventory(); // Refresh inventory quantities
+      setAllocateItem(null);
     } catch (err) {
       console.error(err);
     }
   };
 
-  // -------------------- ADD NEW ITEM --------------------
+  // -------------------- ADD ITEM --------------------
   const handleAddItemSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -74,13 +74,38 @@ export default function InventoryPage() {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) {
-        console.error("Add item failed");
-        return;
-      }
+      if (!res.ok) return console.error("Add item failed");
 
-      fetchInventory(); // Refresh inventory list
+      fetchInventory();
       setAddItemOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // -------------------- EDIT ITEM --------------------
+  const handleEditItemSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const body = {
+      Category: formData.get("category"),
+      Condition: formData.get("condition"),
+      Quantity: parseInt(formData.get("quantity")),
+      Status: formData.get("status"),
+    };
+
+    try {
+      const res = await fetch(`/api/inventory/${editItem.InventoryID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) return console.error("Edit failed");
+
+      fetchInventory();
+      setEditItem(null);
     } catch (err) {
       console.error(err);
     }
@@ -101,7 +126,6 @@ export default function InventoryPage() {
             className="px-3 py-2 w-64 border border-black rounded-md"
           />
 
-          {/* ADD ITEM BUTTON */}
           <button
             onClick={() => setAddItemOpen(true)}
             className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
@@ -110,7 +134,6 @@ export default function InventoryPage() {
           </button>
         </div>
 
-        {/* INVENTORY TABLE */}
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow-md">
           <table className="w-full border border-black">
             <thead className="bg-gray-200">
@@ -123,43 +146,53 @@ export default function InventoryPage() {
                 <th className="border border-black px-4 py-2">Action</th>
               </tr>
             </thead>
-
             <tbody>
-              {inventory.map((item) => (
-                <tr key={item.InventoryID}>
-                  <td className="border border-black px-4 py-2">{item.InventoryID}</td>
-                  <td className="border border-black px-4 py-2">{item.Category}</td>
-                  <td className="border border-black px-4 py-2">{item.Condition}</td>
-                  <td className="border border-black px-4 py-2">{item.Quantity}</td>
-                  <td className="border border-black px-4 py-2">{item.Status}</td>
-                  <td className="border border-black px-4 py-2">
-                    <div className="flex gap-2">
-                      {/* VIEW BUTTON */}
-                      <button
-                        onClick={() => setSelectedItem(item)}
-                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-                      >
-                        View
-                      </button>
+  {inventory
+    .filter((item) => item.Status !== "Out of Stock") // 🚀 FRONTEND FILTER
+    .map((item) => (
+      <tr key={item.InventoryID}>
+        <td className="border border-black px-4 py-2">{item.InventoryID}</td>
+        <td className="border border-black px-4 py-2">{item.Category}</td>
+        <td className="border border-black px-4 py-2">{item.Condition}</td>
+        <td className="border border-black px-4 py-2">{item.Quantity}</td>
+        <td className="border border-black px-4 py-2">{item.Status}</td>
+        <td className="border border-black px-4 py-2">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSelectedItem(item)}
+              className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+            >
+              View
+            </button>
 
-                      {/* EDIT BUTTON (future) */}
-                      <button className="px-3 py-1 border border-black rounded-md hover:bg-gray-200">
-                        Edit
-                      </button>
+            <button
+              onClick={() => setEditItem(item)}
+              className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+            >
+              Edit
+            </button>
 
-                      {/* ALLOCATE BUTTON */}
-                      <button
-                        onClick={() => setAllocateItem(item)}
-                        className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
-                        disabled={item.Quantity <= 0}
-                      >
-                        Allocate
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            <button
+              onClick={() => setAllocateItem(item)}
+              className="px-3 py-1 border border-black rounded-md hover:bg-gray-200"
+              disabled={item.Quantity <= 0}
+            >
+              Allocate
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))}
+
+  {inventory.filter(item => item.Status !== "Out of Stock").length === 0 && (
+    <tr>
+      <td colSpan="6" className="text-center py-4">
+        No Inventory Items Available
+      </td>
+    </tr>
+  )}
+</tbody>
+
           </table>
         </div>
       </section>
@@ -169,13 +202,12 @@ export default function InventoryPage() {
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
             <h2 className="text-2xl font-bold mb-4">Inventory Item Details</h2>
-
             <p><strong>ID:</strong> {selectedItem.InventoryID}</p>
             <p><strong>Category:</strong> {selectedItem.Category}</p>
             <p><strong>Condition:</strong> {selectedItem.Condition}</p>
             <p><strong>Quantity:</strong> {selectedItem.Quantity}</p>
             <p><strong>Status:</strong> {selectedItem.Status}</p>
-
+            <p><strong>Description:</strong> {selectedItem.donation.Description}</p>
             <button
               onClick={() => setSelectedItem(null)}
               className="mt-6 px-6 py-2 border border-black rounded-md hover:bg-gray-200"
@@ -186,12 +218,80 @@ export default function InventoryPage() {
         </div>
       )}
 
+      {/* ---------------- EDIT MODAL ---------------- */}
+      {editItem && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
+          <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
+            <h2 className="text-2xl font-bold mb-4">Edit Inventory Item</h2>
+            <form onSubmit={handleEditItemSubmit}>
+              <label className="block mb-1 font-semibold">Category</label>
+              <input
+                name="category"
+                defaultValue={editItem.Category}
+                required
+                className="w-full px-3 py-2 border border-black rounded-md"
+              />
+
+              <label className="block mt-4 mb-1 font-semibold">Condition</label>
+              <select
+                name="condition"
+                defaultValue={editItem.Condition}
+                required
+                className="w-full px-3 py-2 border border-black rounded-md"
+              >
+                <option>Good</option>
+                <option>Fair</option>
+                <option>Mixed</option>
+                <option>Poor</option>
+              </select>
+
+              <label className="block mt-4 mb-1 font-semibold">Quantity</label>
+              <input
+                name="quantity"
+                type="number"
+                min="0"
+                defaultValue={editItem.Quantity}
+                required
+                className="w-full px-3 py-2 border border-black rounded-md"
+              />
+
+              <label className="block mt-4 mb-1 font-semibold">Status</label>
+              <select
+                name="status"
+                defaultValue={editItem.Status}
+                required
+                className="w-full px-3 py-2 border border-black rounded-md"
+              >
+                <option>Available</option>
+                <option>Low</option>
+                <option>Out of Stock</option>
+              </select>
+
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setEditItem(null)}
+                  className="px-4 py-2 border border-black rounded-md hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* ---------------- ALLOCATE MODAL ---------------- */}
       {allocateItem && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
-            <h2 className="text-2xl font-bold mb-4">Allocate Item for Distribution</h2>
-
+            <h2 className="text-2xl font-bold mb-4">Allocate Item</h2>
             <form onSubmit={handleAllocateSubmit}>
               <p><strong>Item:</strong> {allocateItem.Category} ({allocateItem.InventoryID})</p>
               <p><strong>Available:</strong> {allocateItem.Quantity}</p>
@@ -221,7 +321,6 @@ export default function InventoryPage() {
                 >
                   Cancel
                 </button>
-
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
@@ -239,7 +338,6 @@ export default function InventoryPage() {
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
             <h2 className="text-2xl font-bold mb-4">Add New Inventory Item</h2>
-
             <form onSubmit={handleAddItemSubmit}>
               <label className="block mb-1 font-semibold">Category</label>
               <input
@@ -288,7 +386,6 @@ export default function InventoryPage() {
                 >
                   Cancel
                 </button>
-
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
