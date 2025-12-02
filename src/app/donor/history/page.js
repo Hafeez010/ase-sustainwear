@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -7,87 +7,15 @@ export default function HistoryPage() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Active nav styling (current page button = black)
+  // Active nav styling
   const linkStyle = (path) =>
     pathname === path
       ? 'px-3 py-1 rounded-md border-2 border-black bg-black text-white transition'
       : 'px-3 py-1 rounded-md border-2 border-black bg-white text-black hover:bg-gray-100 transition';
 
-  // ---- Demo data (swap with API later) ----
-  const demo = [
-    {
-      id: 'SW-00123',
-      date: '2025-03-12',
-      items: ['Jumpers', 'Socks'],
-      quantity: 5,
-      condition: 'Good',
-      status: 'Approved',
-      description: '2 jumpers (M), 3 pairs of socks.',
-    },
-    {
-      id: 'SW-00124',
-      date: '2025-03-08',
-      items: ['Jackets'],
-      quantity: 2,
-      condition: 'Used',
-      status: 'Pending',
-      description: 'Winter jackets, still warm and clean.',
-    },
-    {
-      id: 'SW-00125',
-      date: '2025-03-01',
-      items: ['Shoes', 'Hats', 'Scarves'],
-      quantity: 6,
-      condition: 'Good',
-      status: 'Distributed',
-      description: 'Shoes size 7, plus hats and scarves.',
-    },
-    {
-      id: 'SW-00126',
-      date: '2025-02-19',
-      items: ['T-Shirts'],
-      quantity: 4,
-      condition: 'New',
-      status: 'Approved',
-      description: 'Unworn tees, assorted colours.',
-    },
-    {
-      id: 'SW-00127',
-      date: '2025-02-02',
-      items: ['Trousers'],
-      quantity: 3,
-      condition: 'Good',
-      status: 'Distributed',
-      description: 'Men’s trousers, size 32.',
-    },
-    {
-      id: 'SW-00128',
-      date: '2025-01-25',
-      items: ['Coats'],
-      quantity: 1,
-      condition: 'Good',
-      status: 'Approved',
-      description: 'Long coat, excellent condition.',
-    },
-    {
-      id: 'SW-00129',
-      date: '2025-01-20',
-      items: ['Shirts'],
-      quantity: 3,
-      condition: 'Used',
-      status: 'Pending',
-      description: 'Office shirts, lightly worn.',
-    },
-    {
-      id: 'SW-00130',
-      date: '2025-01-05',
-      items: ['Hoodies', 'Socks'],
-      quantity: 5,
-      condition: 'Good',
-      status: 'Distributed',
-      description: 'Warm hoodies + socks bundle.',
-    },
-  ];
+  // 🔥 REAL DATA INSTEAD OF demo[]
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // ---- Filters & UI state ----
   const [search, setSearch] = useState('');
@@ -104,40 +32,86 @@ export default function HistoryPage() {
     'Sportswear','Nightwear','Accessories','Other'
   ];
 
-  // ---- Derived rows (filter + sort) ----
-  const rows = useMemo(() => {
-    let r = [...demo];
+   const rows = useMemo(() => {
+  let r = [...donations];
 
-    // search by text (items joined + description + id)
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      r = r.filter(
-        (x) =>
-          x.id.toLowerCase().includes(q) ||
-          x.description.toLowerCase().includes(q) ||
-          x.items.join(', ').toLowerCase().includes(q)
-      );
+  // --- SEARCH ---
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    r = r.filter((x) =>
+      x.items.join(', ').toLowerCase().includes(q) ||
+      (x.description || "").toLowerCase().includes(q) ||
+      x.id.toLowerCase().includes(q)
+    );
+  }
+
+  // --- STATUS FILTER ---
+  if (status !== "All") {
+    r = r.filter((x) => x.status === status);
+  }
+
+  // --- TYPE FILTER ---
+  if (type !== "All") {
+    r = r.filter((x) => x.items[0] === type);
+  }
+
+  // --- SORT ---
+  r.sort((a, b) =>
+    sort === "newest"
+      ? new Date(b.date) - new Date(a.date)
+      : new Date(a.date) - new Date(b.date)
+  );
+
+  return r;
+}, [donations, search, status, type, sort]);
+
+  // Fetch donation history for logged-in user
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      router.push("/login");
+      return;
     }
 
-    // status filter
-    if (status !== 'All') {
-      r = r.filter((x) => x.status === status);
+    async function load() {
+      try {
+        const res = await fetch(`/api/donations/history?userId=${userId}`);
+        const data = await res.json();
+        if (res.ok) {
+          // convert DB rows → UI format
+          const formatted = data.map((d) => ({
+            id: d.DonationID,
+            date: d.SubmittedAt,
+            items: [d.Type],        // your table has only a single Type
+            quantity: d.Quantity,
+            condition: d.Condition,
+            status: d.Status,
+            description: d.Description || '',
+          }));
+          setDonations(formatted);
+        }
+      } catch (e) {
+        console.error("History fetch error:", e);
+      }
+      setLoading(false);
     }
 
-    // type filter
-    if (type !== 'All') {
-      r = r.filter((x) => x.items.some((i) => i === type));
-    }
+    load();
+  }, []);
 
-    // sort by date
-    r.sort((a, b) =>
-      sort === 'newest'
-        ? new Date(b.date) - new Date(a.date)
-        : new Date(a.date) - new Date(b.date)
+  // If loading still…
+  if (loading)
+    return (
+      <main className="min-h-screen flex items-center justify-center text-xl">
+        Loading…
+      </main>
     );
 
-    return r;
-  }, [search, status, type, sort]);
+
+  
+
+
+
 
   // ---- Summary ----
   const totalDonations = rows.length;

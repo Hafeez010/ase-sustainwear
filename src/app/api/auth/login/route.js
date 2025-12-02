@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from "@/lib/prisma";
 
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const prisma = new PrismaClient();
 const secret = process.env.JWT_SECRET || 'yourSecretKey'; 
 
 export async function POST(req) {

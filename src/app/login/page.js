@@ -31,6 +31,7 @@ export default function Login() {
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
         localStorage.setItem('role', data.role);
+        localStorage.setItem('userId', data.userId);
 
         
         if (data.role === "admin") {
@@ -76,7 +77,7 @@ export default function Login() {
                             />
                         </div>
                         <button type="submit" className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                            Log
+                            Log in
                         </button>
                         <Link href="/register">
                             <button type="button" className="w-full border border-black text-black py-2 rounded-md hover:bg-gray-200 transition">
