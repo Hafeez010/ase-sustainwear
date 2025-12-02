@@ -1,12 +1,31 @@
 "use client";
 
-export default function DonationsPieChart() {
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+export default function DonationsPieChart({ data }) {
+  const COLORS = ["#3B82F6", "#10B981"];
+
   return (
-    <div className="bg-white border rounded-lg shadow p-4">
-      <h2 className="font-semibold mb-2 text-center">Donations vs Users</h2>
-      <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400">
-        [Pie Chart Placeholder]
-      </div>
+    <div className="bg-white rounded-lg shadow p-4">
+      <h3 className="text-lg font-semibold mb-2">Donations vs Users</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
     </div>
   );
 }

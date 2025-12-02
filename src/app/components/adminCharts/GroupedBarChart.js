@@ -1,12 +1,31 @@
 "use client";
 
-export default function GroupedBarChart() {
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+export default function GroupedBarChart({ data }) {
   return (
-    <div className="bg-white border rounded-lg shadow p-4">
-      <h2 className="font-semibold mb-2 text-center">Active Users & Pending Approvals</h2>
-      <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400">
-        [Grouped Bar Chart Placeholder]
-      </div>
+    <div className="bg-white rounded-lg shadow p-4">
+      <h3 className="text-lg font-semibold mb-2">Active Users vs Pending Approvals</h3>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="activeUsers" fill="#3B82F6" />
+          <Bar dataKey="pendingApprovals" fill="#F59E0B" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
