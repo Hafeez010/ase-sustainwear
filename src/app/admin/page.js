@@ -1,13 +1,11 @@
 "use client";
 
 import AdminNavBar from "@/app/components/AdminNavBar";
-import DonationsLineChart from "@/app/components/adminCharts/DonationsLineChart";
 import PendingBarChart from "@/app/components/adminCharts/PendingBarChart";
 import ActivityVsUsersChart from "@/app/components/adminCharts/ActivityVsUsersChart";
 import GroupedBarChart from "@/app/components/adminCharts/GroupedBarChart";
 import DonationsPieChart from "@/app/components/adminCharts/DonationsPieChart";
-import DonationsVsExpenditureBarChart from "../components/adminCharts/DonationsVsExpenditureBarChart";
-import { dashboardSummary, recentActivity, donationsByMonth, donationStatus, activityVsUsers, groupedBar, donationsPie, monthlyPerformance } from "@/app/admin/data/testData";
+import { dashboardSummary, recentActivity, donationStatus, activityVsUsers, groupedBar, donationsPie } from "@/app/admin/data/testData";
 
 export default function AdminDashboard() {
   return (
@@ -31,14 +29,12 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* CHART GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full max-w-6xl">
-        <DonationsLineChart data={donationsByMonth} />
-        <PendingBarChart data={donationStatus} />
-        <ActivityVsUsersChart data={activityVsUsers} />
-        <GroupedBarChart data={groupedBar} />
+      {/* SELECTED CHARTS GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 w-full max-w-6xl">
         <DonationsPieChart data={donationsPie} />
-        <DonationsVsExpenditureBarChart data={monthlyPerformance} />
+        <ActivityVsUsersChart data={activityVsUsers} />
+        <PendingBarChart data={donationStatus} />
+        <GroupedBarChart data={groupedBar} />
       </div>
 
       {/* RECENT ACTIVITY TABLE */}
