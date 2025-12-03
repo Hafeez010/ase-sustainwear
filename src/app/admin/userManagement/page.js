@@ -4,7 +4,6 @@ import { useState } from "react";
 import AdminNavBar from "@/app/components/AdminNavBar";
 import UserTable from "@/app/components/UserTable";
 import SummaryBox from "@/app/components/SummaryBox";
-
 import EditUserModal from "@/app/components/modals/EditUserModal";
 import DisableUserModal from "@/app/components/modals/DisableUserModal";
 import DeleteUserModal from "@/app/components/modals/DeleteUserModal";
