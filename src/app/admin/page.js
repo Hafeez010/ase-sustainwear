@@ -5,16 +5,40 @@ import PendingBarChart from "@/app/components/adminCharts/PendingBarChart";
 import ActivityVsUsersChart from "@/app/components/adminCharts/ActivityVsUsersChart";
 import GroupedBarChart from "@/app/components/adminCharts/GroupedBarChart";
 import DonationsPieChart from "@/app/components/adminCharts/DonationsPieChart";
-import { dashboardSummary, recentActivity, donationStatus, activityVsUsers, groupedBar, donationsPie } from "@/app/admin/data/testData";
+import {
+  dashboardSummary,
+  recentActivity,
+  donationStatus,
+  activityVsUsers,
+  groupedBar,
+  donationsPie
+} from "@/app/admin/data/testData";
 
 export default function AdminDashboard() {
   return (
-    <main className="flex flex-col items-center justify-start min-h-screen px-6 py-10 bg-gray-50 text-gray-800">
-      <h1 className="text-5xl font-extrabold mb-4 text-black text-center">Admin Dashboard</h1>
+    <main className="flex flex-col items-center justify-start min-h-screen px-6 py-6 bg-gray-50 text-gray-800">
+
+      {/* HEADER ROW */}
+      <div className="flex justify-between items-center w-full max-w-6xl mb-6">
+        {/* Company Name */}
+        <h1 className="text-2xl font-bold text-black">SustainWear</h1>
+
+        {/* Page Title */}
+        <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
+          Admin Dashboard
+        </h2>
+
+        {/* Logout Button */}
+        <button className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium">
+          Logout
+        </button>
+      </div>
+
+      {/* NAV BAR */}
       <AdminNavBar activeTab="Dashboard" />
 
       {/* SUMMARY CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 w-full max-w-6xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="font-bold mb-2 text-lg">Total Donations</h2>
           <p className="text-2xl font-semibold text-blue-600">{dashboardSummary.totalDonations}</p>
@@ -29,7 +53,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* SELECTED CHARTS GRID */}
+      {/* CHARTS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 w-full max-w-6xl">
         <DonationsPieChart data={donationsPie} />
         <ActivityVsUsersChart data={activityVsUsers} />
@@ -61,6 +85,7 @@ export default function AdminDashboard() {
           </tbody>
         </table>
       </div>
+
     </main>
   );
 }

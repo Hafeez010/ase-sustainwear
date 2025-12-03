@@ -13,13 +13,25 @@ export default function SystemsLogPage() {
   ];
 
   return (
-    <main className="flex flex-col items-center justify-start min-h-screen px-6 py-10 bg-gray-50 text-gray-800">
-      {/* Page Title */}
-      <h1 className="text-5xl font-extrabold mb-4 text-black text-center">
-        System Logs
-      </h1>
+    <main className="flex flex-col items-center justify-start min-h-screen px-6 py-6 bg-gray-50 text-gray-800">
 
-      {/* Navigation Tabs */}
+      {/* HEADER ROW */}
+      <div className="flex justify-between items-center w-full max-w-6xl mb-6">
+        {/* Company Name */}
+        <h1 className="text-2xl font-bold text-black">SustainWear</h1>
+
+        {/* Page Title */}
+        <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
+          System Logs
+        </h2>
+
+        {/* Logout Button */}
+        <button className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium">
+          Logout
+        </button>
+      </div>
+
+      {/* NAV BAR */}
       <AdminNavBar activeTab="System Logs" />
 
       {/* Logs Table */}
