@@ -1,12 +1,19 @@
 "use client";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-export default function DonationsLineChart() {
+export default function DonationsLineChart({ data }) {
   return (
-    <div className="bg-white border rounded-lg shadow p-4 flex flex-col items-center justify-center">
-      <h2 className="font-semibold mb-2 text-center">Donations Over Time</h2>
-      <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400">
-        [Line Chart Placeholder]
-      </div>
+    <div className="bg-white p-4 rounded-lg shadow min-h-[250px]">
+      <h2 className="text-lg font-bold mb-2">Donations Over Time</h2>
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="donations" stroke="#3B82F6" strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 }

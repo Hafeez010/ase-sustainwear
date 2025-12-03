@@ -1,12 +1,23 @@
 "use client";
 
-export default function PendingBarChart() {
+export default function PendingBarChart({ data }) {
   return (
-    <div className="bg-white border rounded-lg shadow p-4">
-      <h2 className="font-semibold mb-2 text-center">Pending / Approved / Shipped</h2>
-      <div className="w-full h-48 flex items-center justify-center bg-gray-100 text-gray-400">
-        [Horizontal Bar Chart Placeholder]
-      </div>
+    <div className="bg-white p-4 rounded-lg shadow min-h-[250px]">
+      <h2 className="text-lg font-bold mb-2">Donation Progress</h2>
+      {data.map((item, i) => (
+        <div key={i} className="mb-4">
+          <div className="flex justify-between mb-1">
+            <span className="text-gray-700">{item.label}</span>
+            <span className="text-gray-700">{item.value}%</span>
+          </div>
+          <div className="w-full bg-gray-200 h-4 rounded-full">
+            <div
+              className="h-4 rounded-full"
+              style={{ width: `${item.value}%`, backgroundColor: "#F59E0B" }}
+            ></div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
