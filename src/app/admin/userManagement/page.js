@@ -13,7 +13,6 @@ export default function UserManagement() {
   const [activeModal, setActiveModal] = useState(null); 
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Placeholder sample data with IDs
   const users = [
     { id: 1, name: "User 1", role: "Staff", status: "active" },
     { id: 2, name: "User 2", role: "Donor", status: "active" },
@@ -42,8 +41,13 @@ export default function UserManagement() {
 
       <AdminNavBar activeTab="User Management" />
 
-      <div className="flex flex-col md:flex-row justify-center gap-10 w-full max-w-5xl mt-10">
-        
+      {/* Summary Box horizontally above the table */}
+      <div className="w-full max-w-5xl mb-8">
+        <SummaryBox totalUsers={28} totalRequests={17} totalActions={50} />
+      </div>
+
+      {/* User Table full width */}
+      <div className="w-full max-w-5xl">
         <UserTable
           users={users}
           onEdit={(u) => openModal("edit", u)}
@@ -51,23 +55,18 @@ export default function UserManagement() {
           onDelete={(u) => openModal("delete", u)}
           onResetPassword={(u) => openModal("reset", u)}
         />
-
-        <SummaryBox totalUsers={28} totalRequests={17} totalActions={50} />
       </div>
 
-      {/* ALL MODALS */}
+      {/* Modals */}
       {activeModal === "edit" && (
         <EditUserModal user={selectedUser} onClose={closeModal} />
       )}
-
       {activeModal === "disable" && (
         <DisableUserModal user={selectedUser} onClose={closeModal} />
       )}
-
       {activeModal === "delete" && (
         <DeleteUserModal user={selectedUser} onClose={closeModal} />
       )}
-
       {activeModal === "reset" && (
         <ResetPasswordModal user={selectedUser} onClose={closeModal} />
       )}
