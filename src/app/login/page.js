@@ -51,11 +51,8 @@ export default function Login() {
     return (
     <main>
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-
-            {/* Logo at the top */}
             <h1 className="text-4xl font-extrabold mb-6">SustainWear</h1>
 
-            {/* Login Card */}
             <div className="bg-white border-2 border-black rounded-lg shadow-lg p-8 w-96">
                 <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
 

@@ -76,89 +76,132 @@ export default function SignUp() {
 
   const isFormValid = username && firstName && lastName && dob && password && confirmPassword && password === confirmPassword && Object.values(formErrors).every((error) => error === '');
 
-  return (
-    <main>
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 py-12">
-        <div className="bg-white border-2 border-black rounded-lg shadow-lg p-8 w-96">
-          <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
+ return (
+  <main>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-12">
 
-          <form className="space-y-4" onSubmit={handleSubmit}>
+      {/* Logo at the top */}
+      <h1 className="text-4xl font-extrabold mb-6">SustainWear</h1>
 
-            <label className="block text-sm font-medium text-gray-700">Username</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-black rounded-md"
-              value={username}
-              onChange={(e) => { setUsername(e.target.value); setFormErrors({ ...formErrors, usernameError: '' }); }}
-            />
-            {formErrors.usernameError && <p className="text-red-500 text-sm">{formErrors.usernameError}</p>}
+      <div className="bg-white border-2 border-black rounded-lg shadow-lg p-8 w-96">
+        <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
 
-            <label className="block text-sm font-medium text-gray-700">First Name</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-black rounded-md"
-              value={firstName}
-              onChange={(e) => { setFirstName(e.target.value); setFormErrors({ ...formErrors, firstNameError: '' }); }}
-            />
-            {formErrors.firstNameError && <p className="text-red-500 text-sm">{formErrors.firstNameError}</p>}
+        <form className="space-y-4" onSubmit={handleSubmit}>
 
-            <label className="block text-sm font-medium text-gray-700">Last Name</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-black rounded-md"
-              value={lastName}
-              onChange={(e) => { setLastName(e.target.value); setFormErrors({ ...formErrors, lastNameError: '' }); }}
-            />
-            {formErrors.lastNameError && <p className="text-red-500 text-sm">{formErrors.lastNameError}</p>}
+          {/* Username */}
+          <label className="block text-sm font-medium text-gray-700">Username</label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={username}
+            onChange={(e) => { setUsername(e.target.value); setFormErrors({ ...formErrors, usernameError: '' }); }}
+          />
+          {formErrors.usernameError && <p className="text-red-500 text-sm">{formErrors.usernameError}</p>}
 
-            <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 border border-black rounded-md"
-              value={dob}
-              onChange={(e) => { setDob(e.target.value); setFormErrors({ ...formErrors, dobError: '' }); }}
-            />
-            {formErrors.dobError && <p className="text-red-500 text-sm">{formErrors.dobError}</p>}
+          {/* First Name */}
+          <label className="block text-sm font-medium text-gray-700">First Name</label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={firstName}
+            onChange={(e) => { setFirstName(e.target.value); setFormErrors({ ...formErrors, firstNameError: '' }); }}
+          />
+          {formErrors.firstNameError && <p className="text-red-500 text-sm">{formErrors.firstNameError}</p>}
 
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              className="w-full px-3 py-2 border border-black rounded-md"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setFormErrors({ ...formErrors, passwordError: '' }); }}
-            />
-            {formErrors.passwordError && <p className="text-red-500 text-sm">{formErrors.passwordError}</p>}
+          {/* Last Name */}
+          <label className="block text-sm font-medium text-gray-700">Last Name</label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={lastName}
+            onChange={(e) => { setLastName(e.target.value); setFormErrors({ ...formErrors, lastNameError: '' }); }}
+          />
+          {formErrors.lastNameError && <p className="text-red-500 text-sm">{formErrors.lastNameError}</p>}
 
-            <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
-            <input
-              type="password"
-              className="w-full px-3 py-2 border border-black rounded-md"
-              value={confirmPassword}
-              onChange={(e) => { setConfirmPassword(e.target.value); setFormErrors({ ...formErrors, confirmPasswordError: '' }); }}
-            />
-            {formErrors.confirmPasswordError && <p className="text-red-500 text-sm">{formErrors.confirmPasswordError}</p>}
+          {/* DOB */}
+          <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <input
+            type="date"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={dob}
+            onChange={(e) => { setDob(e.target.value); setFormErrors({ ...formErrors, dobError: '' }); }}
+          />
+          {formErrors.dobError && <p className="text-red-500 text-sm">{formErrors.dobError}</p>}
 
-            <label className="block text-sm font-medium text-gray-700">Role Code (optional)</label>
-            <input
+          {/* Password */}
+          <label className="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            type="password"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={password}
+            onChange={(e) => { setPassword(e.target.value); setFormErrors({ ...formErrors, passwordError: '' }); }}
+          />
+          {formErrors.passwordError && <p className="text-red-500 text-sm">{formErrors.passwordError}</p>}
+
+          {/* Confirm Password */}
+          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <input
+            type="password"
+            className="w-full px-3 py-2 border border-black rounded-md"
+            value={confirmPassword}
+            onChange={(e) => { setConfirmPassword(e.target.value); setFormErrors({ ...formErrors, confirmPasswordError: '' }); }}
+          />
+          {formErrors.confirmPasswordError && <p className="text-red-500 text-sm">{formErrors.confirmPasswordError}</p>}
+
+          {/* Role Code */}
+          <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
+  Role Code 
+
+  {/* Info Icon with Tooltip */}
+  <div className="relative group">
+    <span className="text-black cursor-pointer font-bold text-lg">?</span>
+
+    {/* Tooltip */}
+    <div className="
+      absolute left-1/2 -translate-x-1/2 mt-2 w-60
+      bg-black text-white text-xs p-2 rounded-md shadow-lg
+      opacity-0 group-hover:opacity-100
+      pointer-events-none transition-opacity
+      z-50
+    ">
+      Only Charity Staff and Admins use a role code.
+      If you're a donor, leave this blank. Staff/Admins will already know the code.
+    </div>
+  </div>
+</label>
+
+          <input
             type="text"
             className="w-full px-3 py-2 border border-black rounded-md"
             value={roleCode}
             onChange={(e) => { setRoleCode(e.target.value); setRoleError(''); }}
-            />
-            {roleError && <p className="text-red-500 text-sm">{roleError}</p>}
+          />
+          {roleError && <p className="text-red-500 text-sm">{roleError}</p>}
 
+          {/* General error */}
+          <p className="text-red-500 text-sm">{error}</p>
 
-            <p className="text-red-500 text-sm mb-0">{error}</p>
+          {/* Buttons */}
+          <button
+            type="submit"
+            disabled={!isFormValid}
+            className="w-full border border-black py-2 rounded-md font-semibold text-white bg-black hover:bg-blue-700 mt-4"
+          >
+            Sign Up
+          </button>
 
-            <button type="submit" disabled={!isFormValid} className="w-full border border-black py-2 rounded-md font-semibold text-white bg-black hover:bg-blue-700 mt-4">Sign Up</button>
-            <Link href="/login">
-              <button type="button" className="w-full border border-black text-black py-2 rounded-md hover:bg-gray-200 transition">
-                Log in
-              </button>
-            </Link>
-          </form>
-        </div>
+          <Link href="/login">
+            <button
+              type="button"
+              className="w-full border border-black text-black py-2 rounded-md hover:bg-gray-200 transition"
+            >
+              Log in
+            </button>
+          </Link>
+
+        </form>
       </div>
-    </main>
-  );
+    </div>
+  </main>
+);
 }
