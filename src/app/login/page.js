@@ -49,46 +49,57 @@ export default function Login() {
 
 
     return (
-        <main>
-            <div className="flex items-center justify-center min-h-screen bg-gray-100">
-                <div className="bg-white border-2 border-black rounded-lg shadow-lg p-8 w-96">
-                    <h1 className="text-2xl font-bold text-center mb-4">Login</h1>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <div>
-                            <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-                            <input
-                                type="text"
-                                id="username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                                className="w-full px-3 py-2 border border-black rounded-md focus:outline-none focus:ring focus:ring-gray-400"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className="w-full px-3 py-2 border border-black rounded-md focus:outline-none focus:ring focus:ring-gray-400"
-                            />
-                        </div>
-                        <button type="submit" className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
-                            Log in
+    <main>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+
+            {/* Logo at the top */}
+            <h1 className="text-4xl font-extrabold mb-6">SustainWear</h1>
+
+            {/* Login Card */}
+            <div className="bg-white border-2 border-black rounded-lg shadow-lg p-8 w-96">
+                <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+
+                <form onSubmit={handleLogin} className="space-y-4">
+                    <div>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                        <input
+                            type="text"
+                            id="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            className="w-full px-3 py-2 border border-black rounded-md focus:outline-none focus:ring focus:ring-gray-400"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="w-full px-3 py-2 border border-black rounded-md focus:outline-none focus:ring focus:ring-gray-400"
+                        />
+                    </div>
+
+                    <button type="submit" className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+                        Log in
+                    </button>
+
+                    <Link href="/register">
+                        <button type="button" className="w-full border border-black text-black py-2 rounded-md hover:bg-gray-200 transition">
+                            Create an account
                         </button>
-                        <Link href="/register">
-                            <button type="button" className="w-full border border-black text-black py-2 rounded-md hover:bg-gray-200 transition">
-                                Create an account
-                            </button>
-                        </Link>
-                    </form>
-                    {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-                    {success && <p className="mt-2 text-sm text-green-500">{success}</p>}
-                </div>
+                    </Link>
+                </form>
+
+                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
+                {success && <p className="mt-2 text-sm text-green-500">{success}</p>}
             </div>
-        </main>
-    );
+        </div>
+    </main>
+);
+
 }
