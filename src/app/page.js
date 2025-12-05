@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from "next/image"; 
 
 export default function Home() {
   return (
@@ -32,7 +33,13 @@ export default function Home() {
       <section className="flex flex-col md:flex-row items-center justify-center max-w-6xl my-20 px-6 gap-10">
         <div className="md:w-1/2">
           <div className="w-full h-64 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500">
-            Image Placeholder
+            <Image
+  src="/Charity-photo.jpg"
+  alt="About SustainWear"
+  width={600}
+  height={400}
+  className="rounded-xl shadow-lg object-cover"
+/>
           </div>
         </div>
 
