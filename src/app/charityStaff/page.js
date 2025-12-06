@@ -4,23 +4,42 @@ import SidebarStaff from "../components/SidebarStaff";
 import { useEffect, useState } from "react";
 
 export default function CharityStaffDashboard() {
-  // MOCK DATA
   const [recentDonations, setRecentDonations] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [distributed, setDistributed] = useState([]);
+
 
   useEffect(() => {
-    setRecentDonations([
-      { id: "D001", donor: "Sarah Tan", date: "28/10/2025", items: 8, status: "Pending" },
-      { id: "D002", donor: "John Lee", date: "26/10/2025", items: 4, status: "Approved" },
-      { id: "D003", donor: "Emma Wong", date: "25/10/2025", items: 6, status: "Pending" },
-    ]);
+  async function loadDashboard() {
+    try {
+      const donationsRes = await fetch("/api/donations");
+      const inventoryRes = await fetch("/api/inventory");
+      const distributionRes = await fetch("/api/distribution");
 
-    setInventory([
-      { id: "C101", category: "Shirts", quantity: 124, condition: "Good" },
-      { id: "C205", category: "Pants", quantity: 87, condition: "Good" },
-      { id: "C330", category: "Jackets", quantity: 42, condition: "Mixed" },
-    ]);
-  }, []);
+      setRecentDonations(await donationsRes.json());
+      setInventory(await inventoryRes.json());
+      setDistributed(await distributionRes.json());
+    } catch (error) {
+      console.error("Dashboard fetch error:", error);
+    }
+  }
+
+  loadDashboard();
+}, []);
+
+const pendingCount = recentDonations.filter(d => d.Status === "Pending").length;
+
+const totalInventoryItems = inventory.reduce(
+  (sum, item) => sum + item.Quantity,
+  0
+);
+
+const totalDistributedItems = distributed.reduce(
+  (sum, d) => sum + d.quantity,
+  0
+);
+
+const approvedItems = totalInventoryItems + totalDistributedItems;
 
   return (
     <main className="flex min-h-screen bg-gray-100">
@@ -39,22 +58,24 @@ export default function CharityStaffDashboard() {
         </div>
 
         {/* SUMMARY CARDS */}
-        <div className="grid grid-cols-3 gap-6 mb-10">
-          <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
-            <h2 className="font-semibold text-lg mb-2">Pending Donations</h2>
-            <p className="text-3xl font-bold">2</p>
-          </div>
+     <div className="grid grid-cols-3 gap-6 mb-10">
+  <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
+    <h2 className="font-semibold text-lg mb-2">Pending Donations</h2>
+    <p className="text-3xl font-bold">{pendingCount}</p>
+  </div>
 
-          <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
-            <h2 className="font-semibold text-lg mb-2">Total Inventory Items</h2>
-            <p className="text-3xl font-bold">253</p>
-          </div>
+  <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
+    <h2 className="font-semibold text-lg mb-2">Total Inventory Items</h2>
+    <p className="text-3xl font-bold">{totalInventoryItems}</p>
+  </div>
 
-          <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
-            <h2 className="font-semibold text-lg mb-2">Approved Donations</h2>
-            <p className="text-3xl font-bold">1</p>
-          </div>
-        </div>
+  <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
+    <h2 className="font-semibold text-lg mb-2">Approved Donations</h2>
+    <p className="text-3xl font-bold">{approvedItems}</p>
+  </div>
+</div>
+
+
 
         {/* RECENT DONATIONS */}
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow mb-10">
@@ -72,16 +93,19 @@ export default function CharityStaffDashboard() {
             </thead>
 
             <tbody>
-              {recentDonations.map((d) => (
-                <tr key={d.id}>
-                  <td className="border border-black px-4 py-2">{d.id}</td>
-                  <td className="border border-black px-4 py-2">{d.donor}</td>
-                  <td className="border border-black px-4 py-2">{d.date}</td>
-                  <td className="border border-black px-4 py-2">{d.items}</td>
-                  <td className="border border-black px-4 py-2">{d.status}</td>
-                </tr>
-              ))}
-            </tbody>
+  {recentDonations.map((d) => (
+    <tr key={d.DonationID}>
+      <td className="border border-black px-4 py-2">{d.DonationID}</td>
+      <td className="border border-black px-4 py-2">{d.Name}</td>
+      <td className="border border-black px-4 py-2">
+        {new Date(d.SubmittedAt).toLocaleDateString()}
+      </td>
+      <td className="border border-black px-4 py-2">{d.Quantity}</td>
+      <td className="border border-black px-4 py-2">{d.Status}</td>
+    </tr>
+  ))}
+</tbody>
+
           </table>
         </div>
 
@@ -100,15 +124,16 @@ export default function CharityStaffDashboard() {
             </thead>
 
             <tbody>
-              {inventory.map((item) => (
-                <tr key={item.id}>
-                  <td className="border border-black px-4 py-2">{item.id}</td>
-                  <td className="border border-black px-4 py-2">{item.category}</td>
-                  <td className="border border-black px-4 py-2">{item.quantity}</td>
-                  <td className="border border-black px-4 py-2">{item.condition}</td>
-                </tr>
-              ))}
-            </tbody>
+  {inventory.map((item) => (
+    <tr key={item.InventoryID}>
+      <td className="border border-black px-4 py-2">{item.InventoryID}</td>
+      <td className="border border-black px-4 py-2">{item.Category}</td>
+      <td className="border border-black px-4 py-2">{item.Quantity}</td>
+      <td className="border border-black px-4 py-2">{item.Condition}</td>
+    </tr>
+  ))}
+</tbody>
+
           </table>
         </div>
       </section>
