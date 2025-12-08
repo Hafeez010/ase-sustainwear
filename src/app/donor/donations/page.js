@@ -13,26 +13,25 @@ export default function DonationsPage() {
       : 'px-3 py-1 rounded-md border-2 border-black bg-white text-black hover:bg-gray-100 transition';
 
   const [form, setForm] = useState({
-    name: '',
+    quantity: '',
     phone: '',
     type: 'Jumpers',
     condition: 'Good',
     description: '',
   });
+
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState('');
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-  const storedUserId = localStorage.getItem('userId');
-
-  if (!storedUserId) {
-    router.push('/login');
-  } else {
-    setUserId(storedUserId);
-  }
-}, [router]);
-
+    const storedUserId = localStorage.getItem('userId');
+    if (!storedUserId) {
+      router.push('/login');
+    } else {
+      setUserId(storedUserId);
+    }
+  }, [router]);
 
   const clothingOptions = [
     'Jumpers','Trousers','Shirts','T-Shirts','Jeans','Shorts','Dresses','Skirts',
@@ -70,7 +69,7 @@ export default function DonationsPage() {
     if (res.ok) {
       setNotice('Thank you! Your donation has been recorded.');
       setForm({
-        name: '',
+        quantity: '',
         phone: '',
         type: 'Jumpers',
         condition: 'Good',
@@ -83,7 +82,6 @@ export default function DonationsPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 text-slate-900">
-      {/* Header & navigation */}
       <header className="bg-white border-b-2 border-black">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -92,12 +90,14 @@ export default function DonationsPage() {
             </div>
             <span className="text-lg font-bold">SustainWear</span>
           </div>
+
           <nav className="hidden md:flex items-center gap-3">
             <Link href="/donor" className={linkStyle('/donor')}>Dashboard</Link>
             <Link href="/donor/donations" className={linkStyle('/donor/donations')}>Submit Donation</Link>
             <Link href="/donor/history" className={linkStyle('/donor/history')}>History</Link>
             <Link href="/donor/contactUs" className={linkStyle('/donor/contactUs')}>Contact Us</Link>
           </nav>
+
           <button
             onClick={() => {
               localStorage.removeItem('userId');
@@ -112,46 +112,26 @@ export default function DonationsPage() {
         </div>
       </header>
 
-      {/* Donation form */}
       <section className="mx-auto max-w-3xl px-6 py-10">
         <div className="bg-white border-2 border-black rounded-xl shadow-sm p-8">
           <h1 className="text-3xl font-extrabold text-center mb-8">Donation Box</h1>
+
           {notice && (
             <div className="mb-6 border-2 border-black rounded-md bg-gray-100 px-4 py-3 text-center text-sm">
               {notice}
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
-                <input
-                  id="name"
-                  name="name"
-                  value={form.name}
-                  onChange={onChange}
-                  required
-                  className="w-full px-3 py-2 border-2 border-black rounded-md focus:outline-none"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone Number</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  value={form.phone}
-                  onChange={onChange}
-                  inputMode="tel"
-                  className="w-full px-3 py-2 border-2 border-black rounded-md focus:outline-none"
-                  placeholder="Optional"
-                />
-              </div>
-            </div>
 
+          <form onSubmit={handleSubmit} className="space-y-6">
+
+            {/* ROW 1 — TYPE + QUANTITY */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* Left: What would you like to donate? */}
               <div>
-                <label htmlFor="type" className="block text-sm font-medium mb-1">What would you like to donate?</label>
+                <label htmlFor="type" className="block text-sm font-medium mb-1">
+                  What would you like to donate?
+                </label>
                 <select
                   id="type"
                   name="type"
@@ -164,6 +144,45 @@ export default function DonationsPage() {
                   ))}
                 </select>
               </div>
+
+              {/* Right: Quantity */}
+              <div>
+                <label htmlFor="quantity" className="block text-sm font-medium mb-1">
+                  Quantity
+                </label>
+                <input
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  value={form.quantity}
+                  min="1"
+                  onChange={onChange}
+                  required
+                  className="w-full px-3 py-2 border-2 border-black rounded-md focus:outline-none"
+                  placeholder="e.g., 5"
+                />
+              </div>
+
+            </div>
+
+            {/* ROW 2 — PHONE + CONDITION */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* Left: Phone */}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone Number</label>
+                <input
+                  id="phone"
+                  name="phone"
+                  value={form.phone}
+                  onChange={onChange}
+                  inputMode="tel"
+                  className="w-full px-3 py-2 border-2 border-black rounded-md focus:outline-none"
+                  placeholder="Optional"
+                />
+              </div>
+
+              {/* Right: Condition */}
               <div>
                 <label htmlFor="condition" className="block text-sm font-medium mb-1">Condition</label>
                 <select
@@ -178,8 +197,10 @@ export default function DonationsPage() {
                   <option>Used</option>
                 </select>
               </div>
+
             </div>
 
+            {/* DESCRIPTION */}
             <div>
               <label htmlFor="description" className="block text-sm font-medium mb-1">Description</label>
               <textarea
@@ -189,7 +210,7 @@ export default function DonationsPage() {
                 onChange={onChange}
                 rows={3}
                 className="w-full px-3 py-2 border-2 border-black rounded-md focus:outline-none"
-                placeholder="Optional: size, brand, quantity, notes…"
+                placeholder="Optional: size, brand, notes…"
               />
             </div>
 
@@ -202,6 +223,7 @@ export default function DonationsPage() {
                 {submitting ? 'Submitting…' : 'Submit'}
               </button>
             </div>
+
           </form>
         </div>
       </section>
