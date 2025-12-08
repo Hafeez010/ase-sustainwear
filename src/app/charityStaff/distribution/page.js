@@ -6,38 +6,22 @@ import SidebarStaff from "../../components/SidebarStaff";
 export default function DistributionRecordsPage() {
   const [records, setRecords] = useState([]);
 
-  useEffect(() => {
-    // 1. MOCK DATA
-    const mockData = [
-      {
-        id: "R001",
-        recipient: "Shelter Hope",
-        category: "Shirts",
-        quantity: 25,
-        date: "21/10/2025",
-      },
-      {
-        id: "R002",
-        recipient: "Penang Aid",
-        category: "Pants",
-        quantity: 18,
-        date: "19/10/2025",
-      },
-      {
-        id: "R003",
-        recipient: "Community Care",
-        category: "Jackets",
-        quantity: 12,
-        date: "17/10/2025",
-      },
-    ];
+ useEffect(() => {
+  const fetchRecords = async () => {
+    try {
+      const res = await fetch("/api/distribution");
+      if (!res.ok) throw new Error("Failed to fetch records");
 
-    // 2. LOAD SAVED DISTRIBUTIONS FROM LOCAL STORAGE
-    const savedRecords = JSON.parse(localStorage.getItem("distributionRecords") || "[]");
+      const data = await res.json();
+      setRecords(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    // 3. MERGE BOTH LISTS
-    setRecords([...mockData, ...savedRecords]);
-  }, []);
+  fetchRecords();
+}, []);
+
 
   return (
     <main className="flex min-h-screen bg-gray-100">
@@ -69,7 +53,6 @@ export default function DistributionRecordsPage() {
                 <th className="border border-black px-4 py-2">Category</th>
                 <th className="border border-black px-4 py-2">Quantity</th>
                 <th className="border border-black px-4 py-2">Date</th>
-                <th className="border border-black px-4 py-2">Action</th>
               </tr>
             </thead>
 
@@ -81,11 +64,6 @@ export default function DistributionRecordsPage() {
                   <td className="border border-black px-4 py-2">{rec.category}</td>
                   <td className="border border-black px-4 py-2">{rec.quantity}</td>
                   <td className="border border-black px-4 py-2">{rec.date}</td>
-                  <td className="border border-black px-4 py-2">
-                    <button className="px-3 py-1 border border-black rounded-md hover:bg-gray-200">
-                      Edit
-                    </button>
-                  </td>
                 </tr>
               ))}
 
