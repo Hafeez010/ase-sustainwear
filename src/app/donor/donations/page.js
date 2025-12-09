@@ -47,38 +47,43 @@ export default function DonationsPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setNotice('');
+  e.preventDefault();
+  setSubmitting(true);
+  setNotice('');
 
-    if (!userId) {
-      setNotice('You must be logged in to submit a donation.');
-      setSubmitting(false);
-      return;
-    }
-
-    const res = await fetch('/api/donations/new', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, userId }),
-    });
-
-    const data = await res.json();
+  if (!userId) {
+    setNotice('You must be logged in to submit a donation.');
     setSubmitting(false);
+    return;
+  }
 
-    if (res.ok) {
-      setNotice('Thank you! Your donation has been recorded.');
-      setForm({
-        quantity: '',
-        phone: '',
-        type: 'Jumpers',
-        condition: 'Good',
-        description: '',
-      });
-    } else {
-      setNotice(data.error || 'Something went wrong.');
-    }
-  };
+  const res = await fetch('/api/donations/new', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      ...form,
+      userId,
+      quantity: Number(form.quantity)
+    }),
+  });
+
+  const data = await res.json();
+  setSubmitting(false);
+
+  if (res.ok) {
+    setNotice('Thank you! Your donation has been recorded.');
+    setForm({
+      quantity: '',
+      phone: '',
+      type: 'Jumpers',
+      condition: 'Good',
+      description: '',
+    });
+  } else {
+    setNotice(data.error || 'Something went wrong.');
+  }
+};
+
 
   return (
     <main className="min-h-screen bg-gray-50 text-slate-900">
