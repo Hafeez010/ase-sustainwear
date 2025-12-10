@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { logAction } from "@/lib/logAction";
+import { use } from "react";
 
 export async function POST(req) {
   try {
@@ -8,11 +9,12 @@ export async function POST(req) {
 
     const donation = await prisma.donation.update({
       where: { DonationID: donationID },
+      where:{userId:UserID},
       data: { Status: "Declined" },
     });
   await logAction({
-  userId: staffId,
-  action: `Declined donation ${donationId}`,
+  userId: UserID,
+  action: `Declined donation ${donationID}`,
   });
 
     return NextResponse.json(donation);
