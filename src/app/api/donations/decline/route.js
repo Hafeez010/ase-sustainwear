@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { logAction } from "@/lib/logAction";
 
 export async function POST(req) {
   try {
@@ -9,6 +10,10 @@ export async function POST(req) {
       where: { DonationID: donationID },
       data: { Status: "Declined" },
     });
+  await logAction({
+  userId: staffId,
+  action: `Declined donation ${donationId}`,
+  });
 
     return NextResponse.json(donation);
   } catch (error) {

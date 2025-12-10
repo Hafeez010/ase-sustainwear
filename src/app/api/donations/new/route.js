@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logAction } from "@/lib/logAction";
 
 export async function POST(req) {
   try {
@@ -10,6 +11,10 @@ export async function POST(req) {
         status: 401,
       });
     }
+await logAction({
+  userId,
+  action: `Submitted donation (${type}) x${quantity}`,
+});
 
     // ⭐ Fetch user name from database
     const user = await prisma.user.findUnique({
@@ -50,4 +55,5 @@ export async function POST(req) {
       { status: 500 }
     );
   }
+
 }

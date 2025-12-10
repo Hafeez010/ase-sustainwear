@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { logAction } from "@/lib/logAction";
+
 
 export async function POST(req) {
   try {
@@ -18,6 +20,10 @@ export async function POST(req) {
     await prisma.donation.update({
       where: { DonationID: donationID },
       data: { Status: "Approved" },
+    });
+    await logAction({
+    userId: staffId,
+    action: `Approved donation ${donationId} → added to inventory`,
     });
 
     // 3. Add the donation to inventory
@@ -43,4 +49,5 @@ export async function POST(req) {
       { status: 500 }
     );
   }
+  
 }

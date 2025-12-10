@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { logAction } from "@/lib/logAction";
 
 
 export async function PUT(req, { params }) {
@@ -13,6 +14,10 @@ export async function PUT(req, { params }) {
       where: { UserID: id },
       data: { FirstName, LastName, Role },
     });
+    await logAction({
+  userId: adminId,
+  action: `Updated user ${updatedUser.UserID} (${updatedUser.Role})`,
+});
 
     return NextResponse.json(updated);
   } catch (error) {
@@ -34,6 +39,10 @@ export async function DELETE(req, { params }) {
     await prisma.user.delete({
       where: { UserID: id },
     });
+    await logAction({
+  userId: adminId,
+  action: `Updated user ${updatedUser.UserID} (${updatedUser.Role})`,
+});
 
     return NextResponse.json(
       { message: "User deleted successfully" },

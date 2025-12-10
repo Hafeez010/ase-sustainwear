@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { logAction } from "@/lib/logAction";
 
 // ---------------- GET ALL DISTRIBUTION RECORDS ----------------
 export async function GET() {
@@ -43,6 +44,10 @@ export async function POST(req) {
     // 1. Fetch inventory item
     const inv = await prisma.inventory.findUnique({
       where: { InventoryID: inventoryID },
+    });
+      await logAction({
+    userId: staffId,
+    action: `Distributed ${quantity} of ${inv.Category} to ${recipient}`,
     });
 
     if (!inv) {
