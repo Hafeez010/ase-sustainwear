@@ -32,7 +32,7 @@ export async function GET() {
 // ---------------- CREATE NEW DISTRIBUTION RECORD ----------------
 export async function POST(req) {
   try {
-    const { inventoryID, recipient, quantity,UserID } = await req.json();
+    const { inventoryID, recipient, quantity,staffId } = await req.json();
 
     if (!inventoryID || !recipient || !quantity) {
       return NextResponse.json(
@@ -46,7 +46,7 @@ export async function POST(req) {
       where: { InventoryID: inventoryID },
     });
       await logAction({
-    userId: UserID,
+    userId: staffId,
     action: `Distributed ${quantity} of ${inv.Category} to ${recipient}`,
     });
 

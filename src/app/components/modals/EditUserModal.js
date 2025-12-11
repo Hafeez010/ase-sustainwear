@@ -14,7 +14,7 @@ export default function EditUserModal({ user, onClose, onUpdated }) {
       const res = await fetch(`/api/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ FirstName: firstName, LastName: lastName, Role: role }),
+        body: JSON.stringify({ adminId: localStorage.getItem("userId"),FirstName: firstName, LastName: lastName, Role: role }),
       });
 
       if (!res.ok) throw new Error("Failed to update user");

@@ -27,33 +27,41 @@ export default function InventoryPage() {
 
   // -------------------- ALLOCATE ITEM --------------------
   const handleAllocateSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+  e.preventDefault();
+  const formData = new FormData(e.target);
 
-    const body = {
-      inventoryID: allocateItem.InventoryID,
-      recipient: formData.get("recipient"),
-      quantity: parseInt(formData.get("quantity")),
-    };
+  const inventoryID = allocateItem.InventoryID;
+  const recipient = formData.get("recipient");
+  const quantity = parseInt(formData.get("quantity"));
 
-    try {
-      const res = await fetch("/api/distribution", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+  const staffId = typeof window !== "undefined"
+    ? localStorage.getItem("userId")
+    : null;
 
-      if (!res.ok) {
-        console.error("Allocation failed");
-        return;
-      }
+  try {
+    const res = await fetch("/api/distribution", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        inventoryID,
+        recipient,
+        quantity,
+        staffId,  // ✅ staff ID sent to backend
+      }),
+    });
 
-      fetchInventory(); // Refresh inventory quantities
-      setAllocateItem(null);
-    } catch (err) {
-      console.error(err);
+    if (!res.ok) {
+      console.error("Allocation failed");
+      return;
     }
-  };
+
+    await fetchInventory(); // Refresh
+    setAllocateItem(null); // Close modal
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   // -------------------- ADD ITEM --------------------
   const handleAddItemSubmit = async (e) => {

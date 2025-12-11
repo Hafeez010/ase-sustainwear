@@ -5,7 +5,7 @@ import { logAction } from "@/lib/logAction";
 
 export async function POST(req) {
   try {
-    const { donationID,UserID } = await req.json();
+    const { donationID,staffId } = await req.json();
 
     // 1. Find the donation
     const donation = await prisma.donation.findUnique({
@@ -22,7 +22,7 @@ export async function POST(req) {
       data: { Status: "Approved" },
     });
     await logAction({
-    userId: UserID,
+    userId: staffId,
     action: `Approved donation ${donationID} → added to inventory`,
     });
 
