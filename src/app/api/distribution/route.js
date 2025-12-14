@@ -2,7 +2,6 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { logAction } from "@/lib/logAction";
 
-// ---------------- GET ALL DISTRIBUTION RECORDS ----------------
 export async function GET() {
   try {
     const distributions = await prisma.distribution.findMany({
@@ -10,7 +9,6 @@ export async function GET() {
       include: { inventory: true },
     });
 
-    // Format response for frontend table
     const formatted = distributions.map((d) => ({
       id: d.DistributionID,
       recipient: d.Recipient,
@@ -29,7 +27,6 @@ export async function GET() {
   }
 }
 
-// ---------------- CREATE NEW DISTRIBUTION RECORD ----------------
 export async function POST(req) {
   try {
     const { inventoryID, recipient, quantity,staffId } = await req.json();
@@ -41,7 +38,6 @@ export async function POST(req) {
       );
     }
 
-    // 1. Fetch inventory item
     const inv = await prisma.inventory.findUnique({
       where: { InventoryID: inventoryID },
     });
@@ -64,7 +60,6 @@ export async function POST(req) {
       );
     }
 
-    // 2. Create distribution
     await prisma.distribution.create({
       data: {
         InventoryID: inventoryID,
@@ -73,7 +68,6 @@ export async function POST(req) {
       },
     });
 
-    // 3. Update inventory quantity & status
     const remaining = inv.Quantity - quantity;
 
     const updatedItem = await prisma.inventory.update({

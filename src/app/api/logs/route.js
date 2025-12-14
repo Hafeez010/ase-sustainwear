@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// GET all logs
 export async function GET() {
   try {
     const logs = await prisma.systemLog.findMany({
@@ -13,7 +12,6 @@ export async function GET() {
       },
     });
 
-    // Format for frontend table
     const formatted = logs.map((log) => ({
       id: log.LogID,
       user: log.user ? `${log.user.FirstName} ${log.user.LastName}` : "System",

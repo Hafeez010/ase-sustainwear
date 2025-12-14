@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// Helper: convert date → YYYY-MM
+
 function monthKey(date) {
   return new Date(date).toISOString().slice(0, 7);
 }
@@ -9,7 +9,6 @@ function monthKey(date) {
 export async function GET() {
   try {
 
-    // 1. Donations per month
     const donations = await prisma.donation.findMany();
     const donationsMap = {};
 
@@ -23,16 +22,12 @@ export async function GET() {
       donations: count,
     }));
 
-
-    // 2. Donation status counts
     const donationStatus = [
       { label: "Pending", value: donations.filter(d => d.Status === "Pending").length },
       { label: "Approved", value: donations.filter(d => d.Status === "Approved").length },
       { label: "Rejected", value: donations.filter(d => d.Status === "Rejected").length },
     ];
 
-
-    // 3. Activity vs Users (line chart)
     const logs = await prisma.systemLog.findMany();
     const users = await prisma.user.findMany();
 
@@ -44,8 +39,6 @@ export async function GET() {
       }
     ];
 
-
-    // 4. Grouped Bar Chart — we mimic "active users" and "pending approvals"
     const groupedBar = [
       {
         month: "Overview",
@@ -54,8 +47,6 @@ export async function GET() {
       }
     ];
 
-
-    // 5. Donations pie chart
     const typeCounts = {};
     donations.forEach(d => {
       typeCounts[d.Type] = (typeCounts[d.Type] || 0) + 1;
@@ -66,8 +57,6 @@ export async function GET() {
       value,
     }));
 
-
-    // 6. Monthly Performance (inventory added → distributed)
     const inventory = await prisma.inventory.findMany({ include: { donation: true } });
     const distributions = await prisma.distribution.findMany();
 
@@ -88,7 +77,6 @@ export async function GET() {
     const monthlyPerformance = Object.values(monthly);
 
 
-    // 7. Recent logs
     const recent = await prisma.systemLog.findMany({
       orderBy: { Timestamp: "desc" },
       take: 20,

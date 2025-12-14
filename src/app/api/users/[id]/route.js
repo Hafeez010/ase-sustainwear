@@ -2,15 +2,11 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { logAction } from "@/lib/logAction";
 
-// ---------------------------------------------
-// UPDATE USER
-// ---------------------------------------------
 export async function PUT(req, context) {
   try {
-    // Fix: await params
+
     const { id } = await context.params;
 
-    // Extract adminId + fields being updated
     const { adminId, FirstName, LastName, Role } = await req.json();
 
     if (!adminId) {
@@ -25,7 +21,6 @@ export async function PUT(req, context) {
       data: { FirstName, LastName, Role },
     });
 
-    // Log action
     await logAction({
       userId: adminId,
       action: `Updated user ${updatedUser.UserID} (${updatedUser.Role})`,
@@ -42,9 +37,6 @@ export async function PUT(req, context) {
   }
 }
 
-// ---------------------------------------------
-// DELETE USER
-// ---------------------------------------------
 export async function DELETE(req, context) {
   try {
     const { id } = await context.params;

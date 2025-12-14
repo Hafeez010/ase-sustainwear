@@ -16,7 +16,6 @@ await logAction({
   action: `Submitted donation (${type}) x${quantity}`,
 });
 
-    // ⭐ Fetch user name from database
     const user = await prisma.user.findUnique({
       where: { UserID: userId },
     });
@@ -29,10 +28,9 @@ await logAction({
 
     const donorName = `${user.FirstName} ${user.LastName}`;
 
-    // ⭐ Create donation
     const donation = await prisma.donation.create({
       data: {
-        Name: donorName,                     // auto-filled from user table
+        Name: donorName,                    
         Phone: phone || null,
         Type: type,
         Condition: condition,
