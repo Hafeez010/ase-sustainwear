@@ -54,9 +54,12 @@ export default function ReportsAnalytics() {
         <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
           Reports & Analytics
         </h2>
-        <button className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium">
+        <a
+          href="http://localhost:3000/login"
+          className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium"
+        >
           Logout
-        </button>
+        </a>
       </div>
 
       <AdminNavBar activeTab="Reports & Analytics" />

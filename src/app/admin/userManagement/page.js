@@ -66,8 +66,8 @@ export default function UserManagement() {
     );
   };
   const handleUserDeleted = (deletedId) => {
-  setUsers((prev) => prev.filter((u) => u.id !== deletedId));
-};
+    setUsers((prev) => prev.filter((u) => u.id !== deletedId));
+  };
 
 
   return (
@@ -79,9 +79,12 @@ export default function UserManagement() {
         <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
           User Management
         </h2>
-        <button className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium">
+        <a
+          href="http://localhost:3000/login"
+          className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium"
+        >
           Logout
-        </button>
+        </a>
       </div>
 
       {/* NAV BAR */}
@@ -89,7 +92,7 @@ export default function UserManagement() {
 
       {/* SUMMARY BOX */}
       <div className="w-full max-w-5xl mb-8">
-        <SummaryBox 
+        <SummaryBox
           totalUsers={users.length}
           totalRequests={0}
           totalActions={0}
@@ -119,12 +122,12 @@ export default function UserManagement() {
       )}
 
       {activeModal === "delete" && selectedUser && (
-  <DeleteUserModal
-    user={selectedUser}
-    onClose={closeModal}
-    onDeleted={handleUserDeleted}
-  />
-)}
+        <DeleteUserModal
+          user={selectedUser}
+          onClose={closeModal}
+          onDeleted={handleUserDeleted}
+        />
+      )}
 
     </main>
   );
