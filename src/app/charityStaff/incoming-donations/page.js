@@ -6,6 +6,14 @@ import SidebarStaff from "../../components/SidebarStaff";
 export default function IncomingDonations() {
   const [donations, setDonations] = useState([]);
   const [selectedDonation, setSelectedDonation] = useState(null);
+  const [staffId, setStaffId] = useState(null);
+
+  // Load staff ID safely
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setStaffId(localStorage.getItem("userId"));
+    }
+  }, []);
 
   // Fetch donations on mount
   useEffect(() => {
@@ -22,44 +30,40 @@ export default function IncomingDonations() {
   }, []);
 
   const approveDonation = async (id) => {
-  try {
-    const res = await fetch("/api/donations/approve", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ donationID: id }),
-    });
+    try {
+      const res = await fetch("/api/donations/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          donationID: id,
+          staffId: staffId, // now correctly loaded
+        }),
+      });
 
-    if (!res.ok) {
-      console.error("Approve failed");
-      return;
+      if (!res.ok) return console.error("Approve failed");
+
+      const data = await res.json();
+
+      setDonations((prev) =>
+        prev.filter((d) => d.DonationID !== data.donationID)
+      );
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    // Get the response from backend
-    const data = await res.json();
-
-    // Remove the approved donation from the list
-    setDonations((prev) =>
-      prev.filter((d) => d.DonationID !== data.donationID)
-    );
-
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-  // Decline donation: updates status in place
   const declineDonation = async (id) => {
     try {
       const res = await fetch("/api/donations/decline", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ donationID: id }),
+        body: JSON.stringify({
+          donationID: id,
+          staffId: staffId,
+        }),
       });
 
-      if (!res.ok) {
-        console.error("Decline failed");
-        return;
-      }
+      if (!res.ok) return console.error("Decline failed");
 
       const data = await res.json();
 

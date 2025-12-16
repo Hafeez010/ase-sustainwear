@@ -27,33 +27,41 @@ export default function InventoryPage() {
 
   // -------------------- ALLOCATE ITEM --------------------
   const handleAllocateSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+  e.preventDefault();
+  const formData = new FormData(e.target);
 
-    const body = {
-      inventoryID: allocateItem.InventoryID,
-      recipient: formData.get("recipient"),
-      quantity: parseInt(formData.get("quantity")),
-    };
+  const inventoryID = allocateItem.InventoryID;
+  const recipient = formData.get("recipient");
+  const quantity = parseInt(formData.get("quantity"));
 
-    try {
-      const res = await fetch("/api/distribution", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+  const staffId = typeof window !== "undefined"
+    ? localStorage.getItem("userId")
+    : null;
 
-      if (!res.ok) {
-        console.error("Allocation failed");
-        return;
-      }
+  try {
+    const res = await fetch("/api/distribution", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        inventoryID,
+        recipient,
+        quantity,
+        staffId,  // ✅ staff ID sent to backend
+      }),
+    });
 
-      fetchInventory(); // Refresh inventory quantities
-      setAllocateItem(null);
-    } catch (err) {
-      console.error(err);
+    if (!res.ok) {
+      console.error("Allocation failed");
+      return;
     }
-  };
+
+    await fetchInventory(); // Refresh
+    setAllocateItem(null); // Close modal
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   // -------------------- ADD ITEM --------------------
   const handleAddItemSubmit = async (e) => {
@@ -84,32 +92,36 @@ export default function InventoryPage() {
   };
 
   // -------------------- EDIT ITEM --------------------
-  const handleEditItemSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+ const handleEditItemSubmit = async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
 
-    const body = {
-      Category: formData.get("category"),
-      Condition: formData.get("condition"),
-      Quantity: parseInt(formData.get("quantity")),
-      Status: formData.get("status"),
-    };
-
-    try {
-      const res = await fetch(`/api/inventory/${editItem.InventoryID}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) return console.error("Edit failed");
-
-      fetchInventory();
-      setEditItem(null);
-    } catch (err) {
-      console.error(err);
-    }
+  const body = {
+    Category: formData.get("category"),
+    Condition: formData.get("condition"),
+    Quantity: parseInt(formData.get("quantity")),
+    Status: formData.get("status"),
   };
+
+  try {
+    const res = await fetch(`/api/inventory/edit`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: editItem.InventoryID, ...body }),
+    });
+
+    if (!res.ok) {
+      console.error("Edit failed");
+      return;
+    }
+
+    fetchInventory(); // refresh the table
+    setEditItem(null); // close the modal
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   // -------------------- RENDER --------------------
   return (
@@ -219,73 +231,76 @@ export default function InventoryPage() {
       )}
 
       {/* ---------------- EDIT MODAL ---------------- */}
-      {editItem && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
-          <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
-            <h2 className="text-2xl font-bold mb-4">Edit Inventory Item</h2>
-            <form onSubmit={handleEditItemSubmit}>
-              <label className="block mb-1 font-semibold">Category</label>
-              <input
-                name="category"
-                defaultValue={editItem.Category}
-                required
-                className="w-full px-3 py-2 border border-black rounded-md"
-              />
+{editItem && (
+  <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
+    <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
+      <h2 className="text-2xl font-bold mb-4">Edit Inventory Item</h2>
+      <form onSubmit={handleEditItemSubmit}>
+        <label className="block mb-1 font-semibold">Category</label>
+        <input
+          name="category"
+          value={editItem.Category}
+          onChange={(e) => setEditItem({ ...editItem, Category: e.target.value })}
+          required
+          className="w-full px-3 py-2 border border-black rounded-md"
+        />
 
-              <label className="block mt-4 mb-1 font-semibold">Condition</label>
-              <select
-                name="condition"
-                defaultValue={editItem.Condition}
-                required
-                className="w-full px-3 py-2 border border-black rounded-md"
-              >
-                <option>Good</option>
-                <option>Fair</option>
-                <option>Mixed</option>
-                <option>Poor</option>
-              </select>
+        <label className="block mt-4 mb-1 font-semibold">Condition</label>
+        <select
+          name="condition"
+          value={editItem.Condition}
+          onChange={(e) => setEditItem({ ...editItem, Condition: e.target.value })}
+          required
+          className="w-full px-3 py-2 border border-black rounded-md"
+        >
+          <option>New</option>
+          <option>Good</option>
+          <option>Used</option>
+        </select>
 
-              <label className="block mt-4 mb-1 font-semibold">Quantity</label>
-              <input
-                name="quantity"
-                type="number"
-                min="0"
-                defaultValue={editItem.Quantity}
-                required
-                className="w-full px-3 py-2 border border-black rounded-md"
-              />
+        <label className="block mt-4 mb-1 font-semibold">Quantity</label>
+        <input
+          name="quantity"
+          type="number"
+          min="0"
+          value={editItem.Quantity}
+          onChange={(e) => setEditItem({ ...editItem, Quantity: Number(e.target.value) })}
+          required
+          className="w-full px-3 py-2 border border-black rounded-md"
+        />
 
-              <label className="block mt-4 mb-1 font-semibold">Status</label>
-              <select
-                name="status"
-                defaultValue={editItem.Status}
-                required
-                className="w-full px-3 py-2 border border-black rounded-md"
-              >
-                <option>Available</option>
-                <option>Low</option>
-                <option>Out of Stock</option>
-              </select>
+        <label className="block mt-4 mb-1 font-semibold">Status</label>
+        <select
+          name="status"
+          value={editItem.Status}
+          onChange={(e) => setEditItem({ ...editItem, Status: e.target.value })}
+          required
+          className="w-full px-3 py-2 border border-black rounded-md"
+        >
+          <option>Available</option>
+          <option>Low</option>
+          <option>Out of Stock</option>
+        </select>
 
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setEditItem(null)}
-                  className="px-4 py-2 border border-black rounded-md hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
+        <div className="flex justify-end gap-3 mt-6">
+          <button
+            type="button"
+            onClick={() => setEditItem(null)}
+            className="px-4 py-2 border border-black rounded-md hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+          >
+            Save Changes
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
 
       {/* ---------------- ALLOCATE MODAL ---------------- */}
       {allocateItem && (

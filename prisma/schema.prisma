@@ -8,14 +8,15 @@ datasource db {
 }
 
 model user {
-  UserID      String     @id @default(uuid()) @db.VarChar(50)
-  FirstName   String     @db.VarChar(100)
-  LastName    String     @db.VarChar(100)
-  DateOfBirth DateTime   @db.Date
-  Username    String     @unique(map: "unique_Username") @db.VarChar(100)
-  Password    String     @db.VarChar(255)
-  Role        String     @db.VarChar(50)
+  UserID      String      @id @default(uuid()) @db.VarChar(50)
+  FirstName   String      @db.VarChar(100)
+  LastName    String      @db.VarChar(100)
+  DateOfBirth DateTime    @db.Date
+  Username    String      @unique(map: "unique_Username") @db.VarChar(100)
+  Password    String      @db.VarChar(255)
+  Role        String      @db.VarChar(50)
   donation    donation[]
+  systemLog   systemLog[]
 
   @@index([Username], map: "index_Username")
 }
@@ -55,4 +56,14 @@ model distribution {
   Date           DateTime @default(now())
 
   inventory inventory @relation(fields: [InventoryID], references: [InventoryID])
+}
+
+model systemlog {
+  LogID     String   @id @default(uuid()) @db.VarChar(50)
+  UserID    String?  @db.VarChar(50)
+  Action    String   @db.VarChar(255)
+  Status    String   @db.VarChar(50)
+  Timestamp DateTime @default(now())
+
+  user user? @relation(fields: [UserID], references: [UserID])
 }

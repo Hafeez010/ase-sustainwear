@@ -19,7 +19,7 @@ export default function SystemLogsTable({ logs }) {
               key={idx}
               className={idx % 2 === 0 ? "bg-white" : "bg-green-50 text-black"}
             >
-              <td className="px-4 py-2 border border-green-300">{log.time}</td>
+              <td className="px-4 py-2 border border-green-300">{log.timestamp}</td>
               <td className="px-4 py-2 border border-green-300">{log.user}</td>
               <td className="px-4 py-2 border border-green-300">{log.role}</td>
               <td className="px-4 py-2 border border-green-300">{log.action}</td>

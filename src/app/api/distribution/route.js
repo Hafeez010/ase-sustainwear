@@ -1,14 +1,49 @@
 import prisma from "@/lib/prisma";
-
 import { NextResponse } from "next/server";
+import { logAction } from "@/lib/logAction";
+
+export async function GET() {
+  try {
+    const distributions = await prisma.distribution.findMany({
+      orderBy: { Date: "desc" },
+      include: { inventory: true },
+    });
+
+    const formatted = distributions.map((d) => ({
+      id: d.DistributionID,
+      recipient: d.Recipient,
+      category: d.inventory?.Category || "Unknown",
+      quantity: d.Quantity,
+      date: new Date(d.Date).toLocaleDateString(),
+    }));
+
+    return NextResponse.json(formatted);
+  } catch (error) {
+    console.error("GET /distribution error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch distribution records" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(req) {
   try {
-    const { inventoryID, recipient, quantity } = await req.json();
+    const { inventoryID, recipient, quantity,staffId } = await req.json();
 
-    // 1. Fetch inventory item
+    if (!inventoryID || !recipient || !quantity) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
     const inv = await prisma.inventory.findUnique({
       where: { InventoryID: inventoryID },
+    });
+      await logAction({
+    userId: staffId,
+    action: `Distributed ${quantity} of ${inv.Category} to ${recipient}`,
     });
 
     if (!inv) {
@@ -25,24 +60,24 @@ export async function POST(req) {
       );
     }
 
-    // 2. Create distribution record
     await prisma.distribution.create({
       data: {
         InventoryID: inventoryID,
         Recipient: recipient,
-        Quantity: quantity,
+        Quantity: Number(quantity),
       },
     });
 
-    // 3. Update inventory after distribution
+    const remaining = inv.Quantity - quantity;
+
     const updatedItem = await prisma.inventory.update({
       where: { InventoryID: inventoryID },
       data: {
-        Quantity: inv.Quantity - quantity,
+        Quantity: remaining,
         Status:
-          inv.Quantity - quantity <= 0
+          remaining <= 0
             ? "Out of Stock"
-            : inv.Quantity - quantity <= 50
+            : remaining <= 50
             ? "Low"
             : "Available",
       },
@@ -50,27 +85,9 @@ export async function POST(req) {
 
     return NextResponse.json(updatedItem);
   } catch (error) {
-    console.error(error);
+    console.error("POST /distribution error:", error);
     return NextResponse.json(
       { error: "Failed to create distribution record" },
-      { status: 500 }
-    );
-  }
-}
-export async function GET() {
-  try {
-    const records = await prisma.distribution.findMany({
-      orderBy: { Date: "desc" },
-      include: {
-        inventory: true, // allows you to show category automatically
-      },
-    });
-
-    return NextResponse.json(records);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Failed to fetch distribution records" },
       { status: 500 }
     );
   }

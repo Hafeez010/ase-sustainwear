@@ -1,25 +1,25 @@
 "use client";
 
 export default function SummaryBox({ totalUsers, totalRequests, totalActions }) {
+  const summaryData = [
+    { label: "Total Users", value: totalUsers },
+    { label: "Total Requests", value: totalRequests },
+    { label: "Total Actions", value: totalActions },
+  ];
+
   return (
-    <div className="w-full md:w-1/3 bg-white border rounded-lg shadow p-5">
-      <h2 className="text-lg font-semibold mb-3 text-center border-b pb-2">
-        Summary
-      </h2>
-
-      <ul className="space-y-2 text-left">
-        <li className="flex justify-between">
-          <span className="font-bold">Total Users:</span> <span>{totalUsers}</span>
-        </li>
-
-        <li className="flex justify-between">
-          <span className="font-bold">Total Requests:</span> <span>{totalRequests}</span>
-        </li>
-
-        <li className="flex justify-between">
-          <span className="font-bold">Total Actions:</span> <span>{totalActions}</span>
-        </li>
-      </ul>
+    <div className="w-full mb-6">
+      <div className="flex flex-col md:flex-row gap-4 justify-center">
+        {summaryData.map((item, idx) => (
+          <div
+            key={idx}
+            className="flex-1 bg-white border rounded-lg shadow p-4 text-center hover:shadow-md transition"
+          >
+            <h3 className="text-gray-600 text-sm font-medium">{item.label}</h3>
+            <p className="text-2xl font-bold text-gray-800 mt-1">{item.value}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
