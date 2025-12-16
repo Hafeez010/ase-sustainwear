@@ -30,7 +30,7 @@ export default function DistributionRecordsPage() {
       <section className="flex-1 p-10">
         <h1 className="text-3xl font-bold mb-8">Distribution Records</h1>
 
-        {/* Search + Add */}
+       
         <div className="mb-6 flex justify-between">
           <input
             type="text"
@@ -43,7 +43,7 @@ export default function DistributionRecordsPage() {
           </button>
         </div>
 
-        {/* Record Table */}
+        
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow-md">
           <table className="w-full border border-black">
             <thead className="bg-gray-200">
