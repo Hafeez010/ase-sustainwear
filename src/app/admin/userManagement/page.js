@@ -14,7 +14,6 @@ export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ---------------- FETCH USERS ----------------
   useEffect(() => {
     async function fetchUsers() {
       try {
@@ -43,7 +42,6 @@ export default function UserManagement() {
     fetchUsers();
   }, []);
 
-  // ---------------- MODAL HANDLERS ----------------
   const openModal = (type, user) => {
     setSelectedUser(user);
     setActiveModal(type);
@@ -66,37 +64,36 @@ export default function UserManagement() {
     );
   };
   const handleUserDeleted = (deletedId) => {
-  setUsers((prev) => prev.filter((u) => u.id !== deletedId));
-};
+    setUsers((prev) => prev.filter((u) => u.id !== deletedId));
+  };
 
 
   return (
     <main className="flex flex-col items-center min-h-screen px-6 py-6 bg-gray-50 text-gray-800">
 
-      {/* HEADER ROW */}
       <div className="flex justify-between items-center w-full max-w-6xl mb-6">
         <h1 className="text-2xl font-bold text-black">SustainWear</h1>
         <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
           User Management
         </h2>
-        <button className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium">
+        <a
+          href="http://localhost:3000/login"
+          className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium"
+        >
           Logout
-        </button>
+        </a>
       </div>
 
-      {/* NAV BAR */}
       <AdminNavBar activeTab="User Management" />
 
-      {/* SUMMARY BOX */}
       <div className="w-full max-w-5xl mb-8">
-        <SummaryBox 
+        <SummaryBox
           totalUsers={users.length}
           totalRequests={0}
           totalActions={0}
         />
       </div>
 
-      {/* LOADING STATE */}
       {loading ? (
         <p className="text-gray-600 mt-10">Loading users...</p>
       ) : (
@@ -109,7 +106,6 @@ export default function UserManagement() {
         </div>
       )}
 
-      {/* EDIT USER MODAL */}
       {activeModal === "edit" && selectedUser && (
         <EditUserModal
           user={selectedUser}
@@ -119,12 +115,12 @@ export default function UserManagement() {
       )}
 
       {activeModal === "delete" && selectedUser && (
-  <DeleteUserModal
-    user={selectedUser}
-    onClose={closeModal}
-    onDeleted={handleUserDeleted}
-  />
-)}
+        <DeleteUserModal
+          user={selectedUser}
+          onClose={closeModal}
+          onDeleted={handleUserDeleted}
+        />
+      )}
 
     </main>
   );
