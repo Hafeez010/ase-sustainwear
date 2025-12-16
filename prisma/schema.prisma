@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
+model User {
   UserID      String      @id @default(uuid()) @db.VarChar(50)
   FirstName   String      @db.VarChar(100)
   LastName    String      @db.VarChar(100)
@@ -15,13 +15,13 @@ model user {
   Username    String      @unique(map: "unique_Username") @db.VarChar(100)
   Password    String      @db.VarChar(255)
   Role        String      @db.VarChar(50)
-  donation    donation[]
-  systemLog   systemLog[]
+  donation    Donation[]
+  systemLog   SystemLog[]
 
   @@index([Username], map: "index_Username")
 }
 
-model donation {
+model Donation {
   DonationID  String      @id @default(uuid()) @db.VarChar(50)
   Name        String      @db.VarChar(100)
   Phone       String?     @db.VarChar(20)
@@ -32,11 +32,11 @@ model donation {
   Status      String      @default("Pending")
   SubmittedAt DateTime    @default(now())
   UserID      String?     @db.VarChar(50)
-  user        user?       @relation(fields: [UserID], references: [UserID])
-  inventory   inventory[]
+  user        User?       @relation(fields: [UserID], references: [UserID])
+  inventory   Inventory[]
 }
 
-model inventory {
+model Inventory {
   InventoryID      String @id @default(uuid()) @db.VarChar(50)
   Category         String @db.VarChar(100)
   Condition        String @db.VarChar(50)
@@ -44,26 +44,26 @@ model inventory {
   Status           String @default("Available")
   SourceDonationID String @db.VarChar(50)
 
-  donation     donation       @relation(fields: [SourceDonationID], references: [DonationID])
-  distribution distribution[]
+  donation     Donation       @relation(fields: [SourceDonationID], references: [DonationID])
+  distribution Distribution[]
 }
 
-model distribution {
+model Distribution {
   DistributionID String   @id @default(uuid()) @db.VarChar(50)
   InventoryID    String   @db.VarChar(50)
   Recipient      String   @db.VarChar(100)
   Quantity       Int
   Date           DateTime @default(now())
 
-  inventory inventory @relation(fields: [InventoryID], references: [InventoryID])
+  inventory Inventory @relation(fields: [InventoryID], references: [InventoryID])
 }
 
-model systemlog {
+model SystemLog {
   LogID     String   @id @default(uuid()) @db.VarChar(50)
   UserID    String?  @db.VarChar(50)
   Action    String   @db.VarChar(255)
   Status    String   @db.VarChar(50)
   Timestamp DateTime @default(now())
 
-  user user? @relation(fields: [UserID], references: [UserID])
+  user User? @relation(fields: [UserID], references: [UserID])
 }
