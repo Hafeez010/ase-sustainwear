@@ -4,10 +4,10 @@ import { useState } from "react";
 import SidebarStaff from "../../components/SidebarStaff";
 
 export default function ProfileSettings() {
-  // Mock user data
+  
   const [profile, setProfile] = useState({
-    name: "Nurul Aisyah",
-    email: "aisyah@sustainwear.org",
+    name: "Charity Staff",
+    email: "CharityStaff@sustainwear.uk",
     phone: "012-3456789",
     role: "Charity Staff",
   });
@@ -33,7 +33,7 @@ export default function ProfileSettings() {
       <section className="flex-1 p-10">
         <h1 className="text-3xl font-bold mb-8">Profile / Settings</h1>
 
-        {/* PROFILE INFO SECTION */}
+        
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow-md mb-10">
           <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
 
@@ -83,7 +83,7 @@ export default function ProfileSettings() {
           </button>
         </div>
 
-        {/* PASSWORD SECTION */}
+        
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow-md">
           <h2 className="text-xl font-semibold mb-4">Change Password</h2>
 

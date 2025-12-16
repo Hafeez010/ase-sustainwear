@@ -8,14 +8,14 @@ export default function IncomingDonations() {
   const [selectedDonation, setSelectedDonation] = useState(null);
   const [staffId, setStaffId] = useState(null);
 
-  // Load staff ID safely
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       setStaffId(localStorage.getItem("userId"));
     }
   }, []);
 
-  // Fetch donations on mount
+  
   useEffect(() => {
     const fetchDonations = async () => {
       try {
@@ -147,7 +147,7 @@ export default function IncomingDonations() {
         </div>
       </section>
 
-      {/* ---------------- VIEW MODAL ---------------- */}
+      
       {selectedDonation && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">

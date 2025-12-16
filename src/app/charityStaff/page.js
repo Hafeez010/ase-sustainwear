@@ -57,7 +57,7 @@ const approvedItems = totalInventoryItems + totalDistributedItems;
           />
         </div>
 
-        {/* SUMMARY CARDS */}
+        
      <div className="grid grid-cols-3 gap-6 mb-10">
   <div className="p-6 bg-white border-2 border-black rounded-lg shadow">
     <h2 className="font-semibold text-lg mb-2">Pending Donations</h2>
@@ -77,7 +77,7 @@ const approvedItems = totalInventoryItems + totalDistributedItems;
 
 
 
-        {/* RECENT DONATIONS */}
+        
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow mb-10">
           <h2 className="text-xl font-semibold mb-4">Recent Donations</h2>
 
@@ -109,7 +109,7 @@ const approvedItems = totalInventoryItems + totalDistributedItems;
           </table>
         </div>
 
-        {/* INVENTORY OVERVIEW */}
+        
         <div className="bg-white border-2 border-black rounded-lg p-6 shadow">
           <h2 className="text-xl font-semibold mb-4">Inventory Overview</h2>
 

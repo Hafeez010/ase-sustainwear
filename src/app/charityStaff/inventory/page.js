@@ -10,7 +10,7 @@ export default function InventoryPage() {
   const [editItem, setEditItem] = useState(null); // Edit modal
   const [addItemOpen, setAddItemOpen] = useState(false); // Add item modal
 
-  // -------------------- FETCH INVENTORY --------------------
+  
   const fetchInventory = async () => {
     try {
       const res = await fetch("/api/inventory");
@@ -25,7 +25,7 @@ export default function InventoryPage() {
     fetchInventory();
   }, []);
 
-  // -------------------- ALLOCATE ITEM --------------------
+  
   const handleAllocateSubmit = async (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
@@ -46,7 +46,7 @@ export default function InventoryPage() {
         inventoryID,
         recipient,
         quantity,
-        staffId,  // ✅ staff ID sent to backend
+        staffId,  
       }),
     });
 
@@ -55,15 +55,15 @@ export default function InventoryPage() {
       return;
     }
 
-    await fetchInventory(); // Refresh
-    setAllocateItem(null); // Close modal
+    await fetchInventory(); 
+    setAllocateItem(null); 
 
   } catch (err) {
     console.error(err);
   }
 };
 
-  // -------------------- ADD ITEM --------------------
+  
   const handleAddItemSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -91,7 +91,7 @@ export default function InventoryPage() {
     }
   };
 
-  // -------------------- EDIT ITEM --------------------
+  
  const handleEditItemSubmit = async (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
@@ -115,15 +115,15 @@ export default function InventoryPage() {
       return;
     }
 
-    fetchInventory(); // refresh the table
-    setEditItem(null); // close the modal
+    fetchInventory(); 
+    setEditItem(null); 
   } catch (err) {
     console.error(err);
   }
 };
 
 
-  // -------------------- RENDER --------------------
+  
   return (
     <main className="flex min-h-screen bg-gray-100">
       <SidebarStaff active="inventory" />
@@ -209,7 +209,7 @@ export default function InventoryPage() {
         </div>
       </section>
 
-      {/* ---------------- VIEW MODAL ---------------- */}
+      
       {selectedItem && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
@@ -230,7 +230,7 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* ---------------- EDIT MODAL ---------------- */}
+      
 {editItem && (
   <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
     <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
@@ -302,7 +302,7 @@ export default function InventoryPage() {
   </div>
 )}
 
-      {/* ---------------- ALLOCATE MODAL ---------------- */}
+      
       {allocateItem && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
@@ -348,7 +348,7 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* ---------------- ADD ITEM MODAL ---------------- */}
+     
       {addItemOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-black/10 flex justify-center items-center">
           <div className="bg-white w-1/3 border-2 border-black rounded-lg p-6 shadow-xl">
