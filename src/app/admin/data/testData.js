@@ -14,7 +14,6 @@ export const recentActivity = [
   { user: "User 6", role: "Staff", time: "21:08", activity: "Approved donation" },
 ];
 
-// Donations over months for line chart
 export const donationsByMonth = [
   { month: "Jan", donations: 50 },
   { month: "Feb", donations: 75 },
@@ -24,14 +23,12 @@ export const donationsByMonth = [
   { month: "Jun", donations: 100 },
 ];
 
-// Pending Bar Chart
 export const donationStatus = [
   { label: "Pending Approvals", value: 70 },
   { label: "Approved Donations", value: 60 },
   { label: "Donations Shipped", value: 30 },
 ];
 
-// Activity vs Users Chart
 export const activityVsUsers = [
   { month: "Jan", activity: 40, users: 20 },
   { month: "Feb", activity: 50, users: 25 },
@@ -41,13 +38,11 @@ export const activityVsUsers = [
   { month: "Jun", activity: 90, users: 34 },
 ];
 
-// Donations Pie Chart
 export const donationsPie = [
   { name: "Donations", value: 300 },
   { name: "Users", value: 120 },
 ];
 
-// Grouped Bar Chart
 export const groupedBar = [
   { month: "Jan", activeUsers: 20, pendingApprovals: 15 },
   { month: "Feb", activeUsers: 25, pendingApprovals: 18 },
@@ -57,7 +52,6 @@ export const groupedBar = [
   { month: "Jun", activeUsers: 34, pendingApprovals: 14 },
 ];
 
-// Monthly Performance Chart (replaces Profit/Loss)
 export const monthlyPerformance = [
   { month: "Jan", income: 1000, expenditure: 800 },
   { month: "Feb", income: 1200, expenditure: 900 },
