@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Link from "next/link"; // if using CRA, replace with <a href> or react-router Link
+import Link from "next/link";
 
 const items = [
   { id: "dashboard", label: "Dashboard", href: "/admin/dashboard" },

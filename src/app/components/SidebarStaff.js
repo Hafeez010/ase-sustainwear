@@ -8,7 +8,7 @@ const items = [
   { id: "incoming", label: "Incoming Donations", href: "/charityStaff/incoming-donations" },
   { id: "inventory", label: "Inventory", href: "/charityStaff/inventory" },
   { id: "distribution", label: "Distribution Records", href: "/charityStaff/distribution" },
-  // Reports removed
+
   { id: "settings", label: "Profile / Settings", href: "/charityStaff/settings" },
 ];
 
@@ -16,13 +16,12 @@ export default function SidebarStaff({ active = "dashboard" }) {
   return (
     <aside className="w-64 bg-white border-r-2 border-black flex flex-col">
       
-      {/* Header */}
+
       <div className="p-6 border-b-2 border-black">
         <h1 className="text-xl font-bold">SustainWear</h1>
         <p className="text-sm text-gray-600">Charity Staff Dashboard</p>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 p-4 space-y-3">
         {items.map((it) => (
           <Link
@@ -40,7 +39,6 @@ export default function SidebarStaff({ active = "dashboard" }) {
         ))}
       </nav>
 
-      {/* Logout */}
       <div className="p-4 border-t-2 border-black">
         <Link
           href="/"

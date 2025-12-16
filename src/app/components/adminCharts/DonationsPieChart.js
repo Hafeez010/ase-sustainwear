@@ -2,7 +2,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 export default function DonationsPieChart({ data }) {
-  // Expanded color palette for better variety
+
   const COLORS = ["#3B82F6", "#F97316", "#10B981", "#8B5CF6", "#F59E0B", "#EC4899"];
 
   return (
