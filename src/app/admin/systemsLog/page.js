@@ -29,7 +29,7 @@ export default function SystemsLogPage() {
 
   return (
     <main className="flex flex-col items-center justify-start min-h-screen px-6 py-6 bg-gray-50 text-gray-800">
-      {/* HEADER ROW */}
+
       <div className="flex justify-between items-center w-full max-w-6xl mb-6">
         <h1 className="text-2xl font-bold text-black">SustainWear</h1>
         <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
@@ -43,10 +43,8 @@ export default function SystemsLogPage() {
         </a>
       </div>
 
-      {/* NAV BAR */}
       <AdminNavBar activeTab="System Logs" />
 
-      {/* LOGS TABLE */}
       <div className="w-full max-w-6xl mt-10">
         {loading ? (
           <p className="text-gray-600 mt-10">Loading logs...</p>
