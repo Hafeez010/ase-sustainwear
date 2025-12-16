@@ -51,48 +51,51 @@ export default function AdminDashboard() {
         <h2 className="text-4xl md:text-5xl font-extrabold text-black flex-1 text-center">
           Admin Dashboard
         </h2>
-        <button className="px-4 py-2 border rounded-md hover:bg-gray-100">
+        <a
+          href="http://localhost:3000/login"
+          className="px-4 py-2 border rounded-md hover:bg-gray-100 text-black font-medium"
+        >
           Logout
-        </button>
+        </a>
       </div>
 
       <AdminNavBar activeTab="Dashboard" />
 
       {/* SUMMARY CARDS */}
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 w-full max-w-6xl">
 
-  <div className="bg-white p-6 rounded-lg shadow">
-    <h2 className="font-bold mb-2 text-lg">Total Donations</h2>
-    <p className="text-2xl font-semibold text-blue-600">
-      {analytics?.totalDonations || 0}
-    </p>
-  </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="font-bold mb-2 text-lg">Total Donations</h2>
+          <p className="text-2xl font-semibold text-blue-600">
+            {analytics?.totalDonations || 0}
+          </p>
+        </div>
 
-  <div className="bg-white p-6 rounded-lg shadow">
-    <h2 className="font-bold mb-2 text-lg">Total Users</h2>
-    <p className="text-2xl font-semibold text-blue-600">
-      {analytics?.totalUsers || 0}
-    </p>
-  </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="font-bold mb-2 text-lg">Total Users</h2>
+          <p className="text-2xl font-semibold text-blue-600">
+            {analytics?.totalUsers || 0}
+          </p>
+        </div>
 
-  <div className="bg-white p-6 rounded-lg shadow">
-    <h2 className="font-bold mb-2 text-lg">Pending Requests</h2>
-    <p className="text-2xl font-semibold text-blue-600">
-      {analytics
-        ? analytics.donationStatus.find(s => s.label === "Pending")?.value || 0
-        : 0}
-    </p>
-  </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="font-bold mb-2 text-lg">Pending Requests</h2>
+          <p className="text-2xl font-semibold text-blue-600">
+            {analytics
+              ? analytics.donationStatus.find(s => s.label === "Pending")?.value || 0
+              : 0}
+          </p>
+        </div>
 
-</div>
+      </div>
 
 
       {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 w-full max-w-6xl">
         <DonationsPieChart data={analytics.donationsPie || []} />
-<ActivityVsUsersChart data={analytics.activityVsUsers || []} />
-<PendingBarChart data={analytics.donationStatus || []} />
-<GroupedBarChart data={analytics.groupedBar || []} />
+        <ActivityVsUsersChart data={analytics.activityVsUsers || []} />
+        <PendingBarChart data={analytics.donationStatus || []} />
+        <GroupedBarChart data={analytics.groupedBar || []} />
 
       </div>
 
